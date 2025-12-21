@@ -7,7 +7,7 @@ export const EVALUATION_ROUTES: Routes = [
     loadComponent: () => import('./evaluation.component').then(m => m.EvaluationComponent)
   },
   {
-    path: 'history',
+    path: 'my-evaluations',
     canActivate: [authGuard],
     loadComponent: () => import('./my-evaluations/my-evaluations.component').then(m => m.MyEvaluationsComponent)
   }

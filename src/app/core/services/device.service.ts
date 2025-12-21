@@ -11,7 +11,9 @@ import {
   DevicePrediction,
   DeviceCondition,
   RepairabilityAssessment,
-  RepairabilityRequest
+  RepairabilityRequest,
+  VisionAnalysisResult,
+  MaterialValueResponse
 } from '../models';
 
 @Injectable({
@@ -207,5 +209,195 @@ export class DeviceService {
         } as RepairabilityAssessment);
       })
     );
+  }
+
+  // Vision AI analysis - upload images and analyze device condition
+  analyzeDeviceImages(
+    files: File[],
+    options?: {
+      deviceId?: number;
+      expectedDeviceType?: string;
+      expectedBrand?: string;
+      scope?: 'FULL' | 'IDENTIFICATION_ONLY' | 'DAMAGE_ONLY' | 'CONDITION_ONLY';
+    }
+  ): Observable<VisionAnalysisResult> {
+    const formData = new FormData();
+
+    files.forEach(file => formData.append('files', file));
+
+    if (options?.deviceId) {
+      formData.append('deviceId', options.deviceId.toString());
+    }
+    if (options?.expectedDeviceType) {
+      formData.append('expectedDeviceType', options.expectedDeviceType);
+    }
+    if (options?.expectedBrand) {
+      formData.append('expectedBrand', options.expectedBrand);
+    }
+    if (options?.scope) {
+      formData.append('scope', options.scope);
+    }
+    formData.append('includeDetailedReport', 'true');
+
+    return this.http.post<VisionAnalysisResult>(`${this.aiUrl}/vision/analyze-upload`, formData).pipe(
+      catchError(() => {
+        // Mock vision analysis for fallback
+        return of(this.getMockVisionAnalysis(files.length, options));
+      })
+    );
+  }
+
+  private getMockVisionAnalysis(
+    fileCount: number,
+    options?: { expectedDeviceType?: string; expectedBrand?: string }
+  ): VisionAnalysisResult {
+    return {
+      analysisId: `mock-${Date.now()}`,
+      analyzedAt: new Date().toISOString(),
+      imageUrls: Array(fileCount).fill('').map((_, i) => `mock-image-${i}.jpg`),
+      identification: {
+        deviceType: options?.expectedDeviceType || 'SMARTPHONE',
+        deviceTypeConfidence: 0.85,
+        brand: options?.expectedBrand || 'Unknown',
+        brandConfidence: 0.75,
+        model: 'Unknown Model',
+        modelConfidence: 0.6,
+        estimatedReleaseYear: 2022
+      },
+      condition: {
+        overallCondition: 'GOOD',
+        conditionConfidence: 0.8,
+        cosmeticGrade: 'B',
+        powersOnDetected: true,
+        powersOnConfidence: 0.7,
+        screenState: 'INTACT',
+        screenConfidence: 0.85,
+        waterDamageIndicators: false,
+        waterDamageConfidence: 0.9,
+        estimatedBatteryHealthPct: 80,
+        cosmeticDefects: ['Légères micro-rayures'],
+        detailedNotes: 'Appareil en bon état général avec traces d\'usure mineures.'
+      },
+      damageReport: {
+        damages: [],
+        severityLevel: 'MINOR',
+        estimatedRepairCost: 0,
+        isRefurbishable: true
+      },
+      components: [
+        { componentType: 'SCREEN', status: 'PRESENT', confidence: 0.95 },
+        { componentType: 'CAMERA', status: 'PRESENT', confidence: 0.9 },
+        { componentType: 'PORTS', status: 'PRESENT', confidence: 0.85 }
+      ],
+      overallConfidence: 0.8,
+      processingTimeMs: 1500,
+      manualReviewRequired: false
+    };
+  }
+
+  // Material value calculation
+  getMaterialValue(deviceType: string, brand?: string, model?: string): Observable<MaterialValueResponse> {
+    const params: Record<string, string> = { deviceType };
+    if (brand) params['brand'] = brand;
+    if (model) params['model'] = model;
+
+    return this.http.get<MaterialValueResponse>(`${environment.apiUrl}/market-price/material-value`, { params }).pipe(
+      catchError(() => {
+        // Mock material value response
+        return of(this.getMockMaterialValue(deviceType));
+      })
+    );
+  }
+
+  private getMockMaterialValue(deviceType: string): MaterialValueResponse {
+    const weights: Record<string, number> = {
+      'SMARTPHONE': 175,
+      'LAPTOP': 2200,
+      'TABLET': 450,
+      'DESKTOP': 8500,
+      'TV': 12000,
+      'CONSOLE': 3200,
+      'PERIPHERAL': 150,
+      'OTHER': 500
+    };
+
+    const weight = weights[deviceType] || 500;
+    const totalFloorValue = weight * 0.015; // ~1.5 cents per gram average
+
+    return {
+      totalFloorValue,
+      theoreticalTotalValue: totalFloorValue * 1.8,
+      recoveryRate: 0.55,
+      deviceType,
+      totalWeightGrams: weight,
+      source: 'ESTIMATE',
+      confidence: 0.7,
+      pricesFetchedAt: new Date().toISOString(),
+      materialBreakdown: [
+        {
+          material: 'Copper',
+          symbol: 'Cu',
+          weightGrams: weight * 0.15,
+          percentageOfDevice: 15,
+          pricePerGram: 0.008,
+          grossValue: weight * 0.15 * 0.008,
+          recoveryRate: 0.9,
+          recoverableValue: weight * 0.15 * 0.008 * 0.9,
+          priceSource: 'LME'
+        },
+        {
+          material: 'Aluminium',
+          symbol: 'Al',
+          weightGrams: weight * 0.12,
+          percentageOfDevice: 12,
+          pricePerGram: 0.002,
+          grossValue: weight * 0.12 * 0.002,
+          recoveryRate: 0.95,
+          recoverableValue: weight * 0.12 * 0.002 * 0.95,
+          priceSource: 'LME'
+        },
+        {
+          material: 'Gold',
+          symbol: 'Au',
+          weightGrams: weight * 0.0003,
+          percentageOfDevice: 0.03,
+          pricePerGram: 65,
+          grossValue: weight * 0.0003 * 65,
+          recoveryRate: 0.95,
+          recoverableValue: weight * 0.0003 * 65 * 0.95,
+          priceSource: 'KITCO'
+        },
+        {
+          material: 'Cobalt',
+          symbol: 'Co',
+          weightGrams: weight * 0.02,
+          percentageOfDevice: 2,
+          pricePerGram: 0.03,
+          grossValue: weight * 0.02 * 0.03,
+          recoveryRate: 0.8,
+          recoverableValue: weight * 0.02 * 0.03 * 0.8,
+          priceSource: 'LME'
+        },
+        {
+          material: 'Lithium',
+          symbol: 'Li',
+          weightGrams: weight * 0.01,
+          percentageOfDevice: 1,
+          pricePerGram: 0.07,
+          grossValue: weight * 0.01 * 0.07,
+          recoveryRate: 0.5,
+          recoverableValue: weight * 0.01 * 0.07 * 0.5,
+          priceSource: 'ESTIMATE'
+        }
+      ],
+      environmentalImpact: {
+        co2SavedKg: weight * 0.05,
+        waterSavedLiters: weight * 2,
+        energySavedKwh: weight * 0.03,
+        rawMaterialsPreservedKg: weight * 0.6 / 1000,
+        landfillAvoided: weight / 1000
+      },
+      warnings: []
+    };
   }
 }

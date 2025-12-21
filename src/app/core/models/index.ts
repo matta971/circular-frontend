@@ -6,3 +6,6 @@ export * from './repairability.model';
 export * from './marketplace.model';
 export * from './certificate.model';
 export * from './notification.model';
+export * from './evaluation.model';
+export * from './vision.model';
+export * from './material.model';

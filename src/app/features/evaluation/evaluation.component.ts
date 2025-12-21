@@ -14,8 +14,11 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
 import { DeviceService } from '../../core/services/device.service';
-import { DeviceCondition, CreateDeviceDraftRequest, RepairabilityAssessment } from '../../core/models';
-import { forkJoin } from 'rxjs';
+import { EvaluationService } from '../../core/services/evaluation.service';
+import { AuthService } from '../../core/services/auth.service';
+import { DeviceCondition, CreateDeviceDraftRequest, RepairabilityAssessment, VisionAnalysisResult, MaterialValueResponse } from '../../core/models';
+import { EvaluationSource, CreateEvaluationRequest } from '../../core/models/evaluation.model';
+import { forkJoin, of } from 'rxjs';
 
 @Component({
   selector: 'app-evaluation',
@@ -127,10 +130,10 @@ import { forkJoin } from 'rxjs';
         <mat-step [optional]="true">
           <ng-template matStepLabel>Photos (optionnel)</ng-template>
           <div class="photo-upload">
-            <div class="upload-zone" (click)="fileInput.click()">
+            <div class="upload-zone" (click)="fileInput.click()" [class.disabled]="analyzingPhotos()">
               <mat-icon>cloud_upload</mat-icon>
               <p>Cliquez ou glissez vos photos ici</p>
-              <small>JPG, PNG (max 5MB par photo)</small>
+              <small>JPG, PNG (max 5MB par photo) - L'IA analysera automatiquement vos images</small>
               <input #fileInput type="file" accept="image/*" multiple hidden (change)="onFilesSelected($event)">
             </div>
 
@@ -139,17 +142,103 @@ import { forkJoin } from 'rxjs';
                 @for (photo of selectedPhotos(); track photo.name; let i = $index) {
                   <div class="photo-item">
                     <img [src]="photo.preview" [alt]="photo.name">
-                    <button mat-icon-button (click)="removePhoto(i)">
+                    <button mat-icon-button (click)="removePhoto(i)" [disabled]="analyzingPhotos()">
                       <mat-icon>close</mat-icon>
                     </button>
                   </div>
                 }
               </div>
             }
+
+            <!-- Vision Analysis Progress -->
+            @if (analyzingPhotos()) {
+              <div class="vision-analyzing">
+                <mat-spinner diameter="32"></mat-spinner>
+                <p>Analyse IA en cours...</p>
+                <small>Identification de l'appareil et évaluation de l'état</small>
+              </div>
+            }
+
+            <!-- Vision Analysis Results -->
+            @if (visionResult() && !analyzingPhotos()) {
+              <div class="vision-results">
+                <h4><mat-icon>auto_awesome</mat-icon> Analyse IA des photos</h4>
+
+                <!-- Identification -->
+                <div class="vision-section">
+                  <div class="vision-row">
+                    <span class="label">Appareil détecté</span>
+                    <span class="value">
+                      {{ visionResult()!.identification.brand }} {{ visionResult()!.identification.model }}
+                      <span class="confidence">({{ (visionResult()!.identification.brandConfidence * 100) | number:'1.0-0' }}%)</span>
+                    </span>
+                  </div>
+                  <div class="vision-row">
+                    <span class="label">Type</span>
+                    <span class="value">{{ getDeviceTypeLabel(visionResult()!.identification.deviceType) }}</span>
+                  </div>
+                </div>
+
+                <!-- Condition -->
+                <div class="vision-section">
+                  <div class="vision-row">
+                    <span class="label">État détecté</span>
+                    <span class="value condition-badge" [class]="'condition-' + visionResult()!.condition.overallCondition.toLowerCase()">
+                      {{ getConditionLabel(visionResult()!.condition.overallCondition) }}
+                    </span>
+                  </div>
+                  <div class="vision-row">
+                    <span class="label">Grade cosmétique</span>
+                    <span class="value grade-badge" [class]="'grade-' + visionResult()!.condition.cosmeticGrade.toLowerCase()">
+                      {{ visionResult()!.condition.cosmeticGrade }}
+                    </span>
+                  </div>
+                  @if (visionResult()!.condition.screenState && visionResult()!.condition.screenState !== 'NOT_VISIBLE') {
+                    <div class="vision-row">
+                      <span class="label">Écran</span>
+                      <span class="value">{{ getScreenStateLabel(visionResult()!.condition.screenState) }}</span>
+                    </div>
+                  }
+                  @if (visionResult()!.condition.estimatedBatteryHealthPct) {
+                    <div class="vision-row">
+                      <span class="label">Batterie estimée</span>
+                      <span class="value">~{{ visionResult()!.condition.estimatedBatteryHealthPct }}%</span>
+                    </div>
+                  }
+                </div>
+
+                <!-- Damages -->
+                @if (visionResult()!.damageReport.damages.length > 0) {
+                  <div class="vision-section damages">
+                    <strong><mat-icon>warning</mat-icon> Dommages détectés</strong>
+                    @for (damage of visionResult()!.damageReport.damages; track damage.damageType) {
+                      <div class="damage-item" [class]="'severity-' + damage.severity.toLowerCase()">
+                        <span>{{ getDamageLabel(damage.damageType) }} - {{ damage.location }}</span>
+                        <small>{{ damage.description }}</small>
+                      </div>
+                    }
+                    @if (visionResult()!.damageReport.estimatedRepairCost > 0) {
+                      <div class="repair-cost">
+                        Coût de réparation estimé: {{ visionResult()!.damageReport.estimatedRepairCost | currency:'EUR' }}
+                      </div>
+                    }
+                  </div>
+                }
+
+                <!-- Confidence -->
+                <div class="vision-confidence">
+                  <mat-icon>verified</mat-icon>
+                  Confiance globale: {{ (visionResult()!.overallConfidence * 100) | number:'1.0-0' }}%
+                  @if (visionResult()!.manualReviewRequired) {
+                    <span class="review-required">- Vérification manuelle recommandée</span>
+                  }
+                </div>
+              </div>
+            }
           </div>
           <div class="step-actions">
-            <button mat-button matStepperPrevious>Retour</button>
-            <button mat-raised-button color="primary" (click)="submitEvaluation()">
+            <button mat-button matStepperPrevious [disabled]="analyzingPhotos()">Retour</button>
+            <button mat-raised-button color="primary" (click)="submitEvaluation()" [disabled]="analyzingPhotos()">
               @if (loading()) {
                 <mat-spinner diameter="20"></mat-spinner>
               } @else {
@@ -213,7 +302,9 @@ import { forkJoin } from 'rxjs';
                       </div>
                     }
 
-                    <button mat-stroked-button color="primary" routerLink="/repairability" class="details-btn">
+                    <button mat-stroked-button color="primary"
+                      [routerLink]="currentEvaluationId() ? ['/repairability', currentEvaluationId()] : ['/repairability']"
+                      class="details-btn">
                       <mat-icon>info</mat-icon>
                       Voir le diagnostic complet
                     </button>
@@ -247,6 +338,70 @@ import { forkJoin } from 'rxjs';
                 </mat-card>
               }
 
+              <!-- Valeur matériaux récupérables -->
+              @if (materialValueResult()) {
+                <mat-card class="material-card">
+                  <h3><mat-icon>science</mat-icon> Valeur des matériaux récupérables</h3>
+
+                  <div class="material-summary">
+                    <div class="material-value-box">
+                      <span class="material-value">{{ materialValueResult()!.totalFloorValue | currency:'EUR' }}</span>
+                      <span class="material-label">Valeur récupérable</span>
+                    </div>
+                    <div class="material-info">
+                      <div class="info-row">
+                        <span>Poids total</span>
+                        <span>{{ materialValueResult()!.totalWeightGrams | number:'1.0-0' }}g</span>
+                      </div>
+                      <div class="info-row">
+                        <span>Taux de récupération</span>
+                        <span>{{ (materialValueResult()!.recoveryRate * 100) | number:'1.0-0' }}%</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <mat-divider></mat-divider>
+
+                  <div class="material-breakdown">
+                    <strong>Composition estimée:</strong>
+                    <div class="materials-list">
+                      @for (mat of materialValueResult()!.materialBreakdown.slice(0, 5); track mat.symbol) {
+                        <div class="material-item">
+                          <span class="material-symbol">{{ mat.symbol }}</span>
+                          <span class="material-name">{{ mat.material }}</span>
+                          <span class="material-weight">{{ mat.weightGrams | number:'1.1-1' }}g</span>
+                          <span class="material-price">{{ mat.recoverableValue | currency:'EUR' }}</span>
+                        </div>
+                      }
+                    </div>
+                  </div>
+
+                  @if (materialValueResult()!.environmentalImpact) {
+                    <mat-divider></mat-divider>
+                    <div class="environmental-impact">
+                      <strong><mat-icon>eco</mat-icon> Impact environnemental du recyclage</strong>
+                      <div class="impact-grid">
+                        <div class="impact-item">
+                          <mat-icon>cloud_off</mat-icon>
+                          <span class="impact-value">{{ materialValueResult()!.environmentalImpact.co2SavedKg | number:'1.1-1' }} kg</span>
+                          <span class="impact-label">CO₂ économisé</span>
+                        </div>
+                        <div class="impact-item">
+                          <mat-icon>water_drop</mat-icon>
+                          <span class="impact-value">{{ materialValueResult()!.environmentalImpact.waterSavedLiters | number:'1.0-0' }} L</span>
+                          <span class="impact-label">Eau économisée</span>
+                        </div>
+                        <div class="impact-item">
+                          <mat-icon>bolt</mat-icon>
+                          <span class="impact-value">{{ materialValueResult()!.environmentalImpact.energySavedKwh | number:'1.1-1' }} kWh</span>
+                          <span class="impact-label">Énergie économisée</span>
+                        </div>
+                      </div>
+                    </div>
+                  }
+                </mat-card>
+              }
+
               <div class="result-actions">
                 <button mat-raised-button color="primary" routerLink="/collection/new">
                   <mat-icon>local_shipping</mat-icon>
@@ -257,9 +412,10 @@ import { forkJoin } from 'rxjs';
                   Trouver un point de dépôt
                 </button>
                 @if (repairabilityResult()?.repairPartners?.length) {
-                  <button mat-raised-button color="accent" routerLink="/repairability">
+                  <button mat-raised-button color="accent"
+                    [routerLink]="currentEvaluationId() ? ['/repairability', currentEvaluationId()] : ['/repairability']">
                     <mat-icon>build</mat-icon>
-                    Trouver un réparateur
+                    Trouver un reparateur
                   </button>
                 }
               </div>
@@ -390,6 +546,11 @@ import { forkJoin } from 'rxjs';
           background: #e3f2fd;
         }
 
+        &.disabled {
+          opacity: 0.6;
+          pointer-events: none;
+        }
+
         mat-icon {
           font-size: 48px;
           width: 48px;
@@ -436,6 +597,166 @@ import { forkJoin } from 'rxjs';
               width: 16px;
               height: 16px;
             }
+          }
+        }
+      }
+
+      .vision-analyzing {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 2rem;
+        margin-top: 1rem;
+        background: #f5f5f5;
+        border-radius: 8px;
+
+        p {
+          margin: 1rem 0 0.25rem;
+          font-weight: 500;
+        }
+
+        small {
+          color: rgba(0, 0, 0, 0.6);
+        }
+      }
+
+      .vision-results {
+        margin-top: 1.5rem;
+        padding: 1rem;
+        background: #e8f5e9;
+        border-radius: 8px;
+        border-left: 4px solid #4caf50;
+
+        h4 {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin: 0 0 1rem;
+          color: #2e7d32;
+
+          mat-icon {
+            font-size: 20px;
+            width: 20px;
+            height: 20px;
+          }
+        }
+
+        .vision-section {
+          margin-bottom: 1rem;
+          padding-bottom: 1rem;
+          border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+
+          &:last-of-type {
+            border-bottom: none;
+          }
+
+          &.damages {
+            background: #fff3e0;
+            border-radius: 8px;
+            padding: 1rem;
+            border-left: 3px solid #ff9800;
+
+            strong {
+              display: flex;
+              align-items: center;
+              gap: 0.5rem;
+              margin-bottom: 0.5rem;
+              color: #e65100;
+
+              mat-icon {
+                font-size: 18px;
+                width: 18px;
+                height: 18px;
+              }
+            }
+          }
+        }
+
+        .vision-row {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 0.25rem 0;
+
+          .label {
+            color: rgba(0, 0, 0, 0.6);
+            font-size: 0.875rem;
+          }
+
+          .value {
+            font-weight: 500;
+          }
+
+          .confidence {
+            font-size: 0.75rem;
+            color: rgba(0, 0, 0, 0.5);
+            margin-left: 0.25rem;
+          }
+
+          .condition-badge, .grade-badge {
+            padding: 0.125rem 0.5rem;
+            border-radius: 4px;
+            font-size: 0.875rem;
+            color: white;
+          }
+
+          .condition-new, .condition-excellent { background: #4caf50; }
+          .condition-good { background: #8bc34a; }
+          .condition-fair { background: #ff9800; }
+          .condition-broken, .condition-poor { background: #f44336; }
+          .condition-dead { background: #9e9e9e; }
+
+          .grade-a { background: #4caf50; }
+          .grade-b { background: #8bc34a; }
+          .grade-c { background: #ff9800; }
+          .grade-d { background: #ff5722; }
+          .grade-e { background: #f44336; }
+        }
+
+        .damage-item {
+          padding: 0.5rem;
+          margin: 0.5rem 0;
+          background: white;
+          border-radius: 4px;
+
+          span {
+            font-weight: 500;
+          }
+
+          small {
+            display: block;
+            color: rgba(0, 0, 0, 0.6);
+            margin-top: 0.25rem;
+          }
+
+          &.severity-minor { border-left: 3px solid #4caf50; }
+          &.severity-moderate { border-left: 3px solid #ff9800; }
+          &.severity-severe { border-left: 3px solid #f44336; }
+        }
+
+        .repair-cost {
+          margin-top: 0.5rem;
+          font-weight: 500;
+          color: #e65100;
+        }
+
+        .vision-confidence {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          font-size: 0.875rem;
+          color: rgba(0, 0, 0, 0.6);
+          margin-top: 0.5rem;
+
+          mat-icon {
+            font-size: 16px;
+            width: 16px;
+            height: 16px;
+            color: #4caf50;
+          }
+
+          .review-required {
+            color: #ff9800;
           }
         }
       }
@@ -700,6 +1021,174 @@ import { forkJoin } from 'rxjs';
         }
       }
 
+      /* Material Value Card */
+      .material-card {
+        margin-bottom: 1.5rem;
+        padding: 1.5rem;
+        text-align: left;
+
+        h3 {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          margin: 0 0 1rem;
+          font-size: 1.1rem;
+
+          mat-icon {
+            color: #9c27b0;
+          }
+        }
+
+        .material-summary {
+          display: flex;
+          gap: 2rem;
+          align-items: center;
+          margin-bottom: 1rem;
+
+          .material-value-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1rem 1.5rem;
+            background: linear-gradient(135deg, #9c27b0, #7b1fa2);
+            border-radius: 12px;
+            color: white;
+
+            .material-value {
+              font-size: 1.5rem;
+              font-weight: bold;
+            }
+
+            .material-label {
+              font-size: 0.75rem;
+              opacity: 0.9;
+            }
+          }
+
+          .material-info {
+            flex: 1;
+
+            .info-row {
+              display: flex;
+              justify-content: space-between;
+              padding: 0.25rem 0;
+              font-size: 0.875rem;
+
+              span:first-child {
+                color: rgba(0, 0, 0, 0.6);
+              }
+
+              span:last-child {
+                font-weight: 500;
+              }
+            }
+          }
+        }
+
+        .material-breakdown {
+          margin: 1rem 0;
+
+          strong {
+            display: block;
+            margin-bottom: 0.75rem;
+            font-size: 0.875rem;
+            color: rgba(0, 0, 0, 0.7);
+          }
+
+          .materials-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+          }
+
+          .material-item {
+            display: grid;
+            grid-template-columns: 40px 1fr 60px 70px;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem;
+            background: #f5f5f5;
+            border-radius: 6px;
+            font-size: 0.875rem;
+
+            .material-symbol {
+              font-weight: bold;
+              color: #9c27b0;
+              text-align: center;
+            }
+
+            .material-name {
+              color: rgba(0, 0, 0, 0.8);
+            }
+
+            .material-weight {
+              text-align: right;
+              color: rgba(0, 0, 0, 0.6);
+            }
+
+            .material-price {
+              text-align: right;
+              font-weight: 500;
+              color: #4caf50;
+            }
+          }
+        }
+
+        .environmental-impact {
+          margin-top: 1rem;
+
+          strong {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+            color: #2e7d32;
+
+            mat-icon {
+              font-size: 20px;
+              width: 20px;
+              height: 20px;
+            }
+          }
+
+          .impact-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+          }
+
+          .impact-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.75rem;
+            background: #e8f5e9;
+            border-radius: 8px;
+            text-align: center;
+
+            mat-icon {
+              color: #4caf50;
+              margin-bottom: 0.25rem;
+            }
+
+            .impact-value {
+              font-weight: bold;
+              font-size: 1rem;
+              color: #2e7d32;
+            }
+
+            .impact-label {
+              font-size: 0.75rem;
+              color: rgba(0, 0, 0, 0.6);
+            }
+          }
+        }
+
+        mat-divider {
+          margin: 1rem 0;
+        }
+      }
+
       .result-actions {
         display: flex;
         flex-wrap: wrap;
@@ -718,6 +1207,8 @@ import { forkJoin } from 'rxjs';
 export class EvaluationComponent {
   private fb = inject(FormBuilder);
   private deviceService = inject(DeviceService);
+  private evaluationService = inject(EvaluationService);
+  private authService = inject(AuthService);
 
   @ViewChild('stepper') stepper!: MatStepper;
 
@@ -778,9 +1269,13 @@ export class EvaluationComponent {
   });
 
   loading = signal(false);
+  analyzingPhotos = signal(false);
   selectedPhotos = signal<{ file: File; preview: string; name: string }[]>([]);
   estimationResult = signal<{ minPrice: number; maxPrice: number; confidence: number } | null>(null);
   repairabilityResult = signal<RepairabilityAssessment | null>(null);
+  visionResult = signal<VisionAnalysisResult | null>(null);
+  materialValueResult = signal<MaterialValueResponse | null>(null);
+  currentEvaluationId = signal<number | null>(null);
 
   selectType(type: string): void {
     this.typeForm.controls.type.setValue(type);
@@ -801,6 +1296,9 @@ export class EvaluationComponent {
     }));
 
     this.selectedPhotos.update(photos => [...photos, ...newPhotos]);
+
+    // Trigger Vision AI analysis
+    this.analyzePhotosWithVision();
   }
 
   removePhoto(index: number): void {
@@ -809,6 +1307,103 @@ export class EvaluationComponent {
       URL.revokeObjectURL(removed.preview);
       return photos.filter((_, i) => i !== index);
     });
+
+    // Re-analyze if photos remain, otherwise clear results
+    if (this.selectedPhotos().length > 0) {
+      this.analyzePhotosWithVision();
+    } else {
+      this.visionResult.set(null);
+    }
+  }
+
+  private analyzePhotosWithVision(): void {
+    const photos = this.selectedPhotos();
+    if (photos.length === 0) return;
+
+    this.analyzingPhotos.set(true);
+    this.visionResult.set(null);
+
+    const files = photos.map(p => p.file);
+    const options = {
+      expectedDeviceType: this.typeForm.controls.type.value || undefined,
+      expectedBrand: this.deviceForm.controls.brand.value || undefined
+    };
+
+    this.deviceService.analyzeDeviceImages(files, options).subscribe({
+      next: (result) => {
+        this.visionResult.set(result);
+        this.analyzingPhotos.set(false);
+
+        // Auto-fill form fields if empty and vision detected values
+        if (result.identification) {
+          if (!this.deviceForm.controls.brand.value && result.identification.brand) {
+            this.deviceForm.controls.brand.setValue(result.identification.brand);
+          }
+          if (!this.deviceForm.controls.model.value && result.identification.model) {
+            this.deviceForm.controls.model.setValue(result.identification.model);
+          }
+        }
+
+        console.log('Vision analysis completed:', result);
+      },
+      error: (err) => {
+        console.warn('Vision analysis failed:', err);
+        this.analyzingPhotos.set(false);
+      }
+    });
+  }
+
+  // Label helper methods for Vision results
+  getDeviceTypeLabel(type: string): string {
+    const labels: Record<string, string> = {
+      'SMARTPHONE': 'Smartphone',
+      'LAPTOP': 'Ordinateur portable',
+      'TABLET': 'Tablette',
+      'DESKTOP': 'PC Bureau',
+      'TV': 'Télévision',
+      'CONSOLE': 'Console',
+      'PERIPHERAL': 'Périphérique',
+      'OTHER': 'Autre'
+    };
+    return labels[type] || type;
+  }
+
+  getConditionLabel(condition: string): string {
+    const labels: Record<string, string> = {
+      'NEW': 'Neuf',
+      'EXCELLENT': 'Excellent',
+      'GOOD': 'Bon',
+      'FAIR': 'Correct',
+      'BROKEN': 'Endommagé',
+      'POOR': 'Mauvais',
+      'DEAD': 'HS'
+    };
+    return labels[condition] || condition;
+  }
+
+  getScreenStateLabel(state: string): string {
+    const labels: Record<string, string> = {
+      'INTACT': 'Intact',
+      'CRACKED': 'Fissuré',
+      'SHATTERED': 'Brisé',
+      'DEAD_PIXELS': 'Pixels morts',
+      'BURN_IN': 'Marquage écran',
+      'NOT_VISIBLE': 'Non visible'
+    };
+    return labels[state] || state;
+  }
+
+  getDamageLabel(damageType: string): string {
+    const labels: Record<string, string> = {
+      'CRACK': 'Fissure',
+      'DENT': 'Bosse',
+      'SCRATCH': 'Rayure',
+      'CORROSION': 'Corrosion',
+      'BURN': 'Brûlure',
+      'MISSING_PART': 'Pièce manquante',
+      'DISCOLORATION': 'Décoloration'
+    };
+    return labels[damageType] || damageType;
   }
 
   submitEvaluation(): void {
@@ -830,38 +1425,143 @@ export class EvaluationComponent {
       description: draft.description
     };
 
-    // Appels API en parallèle pour l'estimation et la réparabilité
+    // Etape 1: Creer le draft, obtenir la reparabilite et la valeur materiaux
     forkJoin({
       draft: this.deviceService.createDraft(draft),
-      repairability: this.deviceService.getRepairabilityAssessment(repairabilityRequest)
+      repairability: this.deviceService.getRepairabilityAssessment(repairabilityRequest),
+      materialValue: this.deviceService.getMaterialValue(draft.type, draft.brand, draft.model)
     }).subscribe({
-      next: ({ draft: result, repairability }) => {
+      next: ({ draft: draftResult, repairability, materialValue }) => {
+        // Stocker immediatement les resultats de reparabilite et valeur materiaux
+        this.repairabilityResult.set(repairability);
+        this.materialValueResult.set(materialValue);
+
+        // Calculer l'estimation locale
         this.estimationResult.set({
-          minPrice: result.estimatedValueMin || 0,
-          maxPrice: result.estimatedValueMax || 0,
+          minPrice: draftResult.estimatedValueMin || 0,
+          maxPrice: draftResult.estimatedValueMax || 0,
           confidence: 85
         });
-        this.repairabilityResult.set(repairability);
-        // Stocker pour la page détaillée
+
+        // Generer un ID temporaire
+        const tempId = draftResult.id ?? draftResult.deviceId ?? Date.now();
+        this.currentEvaluationId.set(tempId);
+
+        // Stocker pour la page detaillee
         sessionStorage.setItem('repairabilityResult', JSON.stringify(repairability));
+        sessionStorage.setItem('currentEvaluationId', tempId.toString());
+        sessionStorage.setItem(`repairability_${tempId}`, JSON.stringify(repairability));
+
+        // Etape 2: Creer une evaluation dans le backend (en arriere-plan)
+        const userId = this.authService.currentUser()?.id;
+        const deviceId = draftResult.id ?? draftResult.deviceId ?? 0;
+
+        if (deviceId) {
+          // Use Vision results if available for more accurate evaluation
+          const visionData = this.visionResult();
+
+          const evaluationRequest: CreateEvaluationRequest = {
+            deviceId: deviceId,
+            deviceType: visionData?.identification?.deviceType || draft.type,
+            deviceBrand: visionData?.identification?.brand || draft.brand,
+            deviceModel: visionData?.identification?.model || draft.model,
+            userId: userId,
+            source: EvaluationSource.CLIENT_DRAFT,
+            powersOn: visionData?.condition?.powersOnDetected ?? (draft.condition !== DeviceCondition.DEAD),
+            screenCracked: visionData?.condition?.screenState === 'CRACKED' || visionData?.condition?.screenState === 'SHATTERED' || draft.condition === DeviceCondition.BROKEN,
+            batteryHealthPct: visionData?.condition?.estimatedBatteryHealthPct ?? this.getBatteryHealthFromCondition(draft.condition),
+            waterDamage: visionData?.condition?.waterDamageIndicators ?? false,
+            marketReferenceEur: draftResult.estimatedValueMax ?? 100,
+            conditionNotes: visionData?.condition?.detailedNotes || draft.description,
+            visionAnalysisId: visionData?.analysisId
+          };
+
+          this.evaluationService.createEvaluation(evaluationRequest).subscribe({
+            next: (evaluation) => {
+              // Mettre a jour avec l'ID reel de l'evaluation
+              const evalId = evaluation.id;
+              this.currentEvaluationId.set(evalId);
+
+              // Mettre a jour les valeurs si disponibles
+              if (evaluation.result) {
+                this.estimationResult.set({
+                  minPrice: evaluation.result.indicativeBuybackEur || draftResult.estimatedValueMin || 0,
+                  maxPrice: evaluation.result.marketReferenceEur || draftResult.estimatedValueMax || 0,
+                  confidence: evaluation.result.confidence || 85
+                });
+              }
+
+              // Mettre a jour le stockage avec l'ID reel
+              sessionStorage.setItem('currentEvaluationId', evalId.toString());
+              sessionStorage.setItem(`repairability_${evalId}`, JSON.stringify(repairability));
+              sessionStorage.setItem(`evaluation_${evalId}`, JSON.stringify({
+                ...evaluation,
+                device: {
+                  type: draft.type,
+                  brand: draft.brand,
+                  model: draft.model,
+                  condition: draft.condition
+                }
+              }));
+
+              console.log('Evaluation creee avec succes, ID:', evalId);
+            },
+            error: (err) => {
+              console.warn('Impossible de creer l\'evaluation backend, utilisation ID local:', err);
+            }
+          });
+        }
+
         this.loading.set(false);
         this.stepper.next();
       },
-      error: () => {
-        // Fallback: simulation locale
+      error: (err) => {
+        console.warn('Erreur creation draft/reparabilite, fallback local:', err);
+        // Fallback complet: simulation locale
         const basePrice = this.getBasePrice(draft.type);
         const conditionMultiplier = this.getConditionMultiplier(draft.condition);
         const estimatedPrice = basePrice * conditionMultiplier;
+
+        // Generer un ID local pour le fallback
+        const localEvalId = Date.now();
+        this.currentEvaluationId.set(localEvalId);
 
         this.estimationResult.set({
           minPrice: Math.round(estimatedPrice * 0.8),
           maxPrice: Math.round(estimatedPrice * 1.2),
           confidence: Math.round(70 + Math.random() * 25)
         });
+
+        // Generer des donnees de reparabilite mock
+        this.deviceService.getRepairabilityAssessment(repairabilityRequest).subscribe({
+          next: (repairability) => {
+            this.repairabilityResult.set(repairability);
+            sessionStorage.setItem('repairabilityResult', JSON.stringify(repairability));
+            sessionStorage.setItem(`repairability_${localEvalId}`, JSON.stringify(repairability));
+          },
+          error: () => {
+            console.warn('Impossible de charger la reparabilite');
+          }
+        });
+
+        sessionStorage.setItem('currentEvaluationId', localEvalId.toString());
+
         this.loading.set(false);
         this.stepper.next();
       }
     });
+  }
+
+  private getBatteryHealthFromCondition(condition?: DeviceCondition): number {
+    if (!condition) return 70;
+    const healthMap: Record<DeviceCondition, number> = {
+      [DeviceCondition.NEW]: 100,
+      [DeviceCondition.GOOD]: 85,
+      [DeviceCondition.FAIR]: 70,
+      [DeviceCondition.BROKEN]: 50,
+      [DeviceCondition.DEAD]: 0
+    };
+    return healthMap[condition] || 70;
   }
 
   getRecommendationIcon(action: string): string {

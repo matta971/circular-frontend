@@ -1,6 +1,6 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { CommonModule, DatePipe } from '@angular/common';
+import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -11,7 +11,9 @@ import { MatExpansionModule } from '@angular/material/expansion';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { DeviceService } from '../../core/services/device.service';
+import { EvaluationService } from '../../core/services/evaluation.service';
 import { RepairabilityAssessment, RepairPartner, FaultDiagnosis } from '../../core/models';
+import { Evaluation } from '../../core/models/evaluation.model';
 
 @Component({
   selector: 'app-repairability',
@@ -27,17 +29,25 @@ import { RepairabilityAssessment, RepairPartner, FaultDiagnosis } from '../../co
     MatTabsModule,
     MatExpansionModule,
     MatDividerModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    DatePipe
   ],
   template: `
     <div class="repairability-container">
       <header class="page-header">
-        <button mat-icon-button routerLink="/evaluation">
+        <button mat-icon-button (click)="goBack()">
           <mat-icon>arrow_back</mat-icon>
         </button>
         <div>
-          <h1>Indice de réparabilité</h1>
-          <p class="subtitle">Analyse détaillée de votre appareil</p>
+          @if (evaluation() && evaluation()!.device) {
+            <h1>Indice de réparabilité de votre {{ evaluation()!.device?.brand }} {{ evaluation()!.device?.model }}</h1>
+            <p class="subtitle">
+              Évaluation du {{ evaluation()!.createdAt | date:'dd/MM/yyyy à HH:mm' }}
+            </p>
+          } @else {
+            <h1>Indice de réparabilité</h1>
+            <p class="subtitle">Analyse détaillée de votre appareil</p>
+          }
         </div>
       </header>
 
@@ -869,34 +879,101 @@ import { RepairabilityAssessment, RepairPartner, FaultDiagnosis } from '../../co
 })
 export class RepairabilityComponent implements OnInit {
   private deviceService = inject(DeviceService);
+  private evaluationService = inject(EvaluationService);
+  private route = inject(ActivatedRoute);
+  private router = inject(Router);
 
   loading = signal(false);
   assessment = signal<RepairabilityAssessment | null>(null);
+  evaluation = signal<any | null>(null);
+  evaluationId = signal<number | null>(null);
 
   ngOnInit(): void {
-    // Try to load from session storage or use mock data
-    const stored = sessionStorage.getItem('repairabilityResult');
-    if (stored) {
-      this.assessment.set(JSON.parse(stored));
+    // Check if we have an evaluation ID in the URL
+    const idParam = this.route.snapshot.paramMap.get('evaluationId');
+
+    if (idParam) {
+      const id = parseInt(idParam, 10);
+      this.evaluationId.set(id);
+      this.loadEvaluationData(id);
     } else {
-      // Load mock data for demo
-      this.loadMockAssessment();
+      // Fallback: try session storage for backward compatibility
+      const storedEvalId = sessionStorage.getItem('currentEvaluationId');
+
+      if (storedEvalId) {
+        const evalId = parseInt(storedEvalId, 10);
+        this.evaluationId.set(evalId);
+        // Always fetch fresh data from API instead of using cached data
+        this.loadEvaluationData(evalId);
+      } else {
+        // Load default assessment for demo
+        this.loadDefaultAssessment();
+      }
     }
   }
 
-  private loadMockAssessment(): void {
+  private loadEvaluationData(evaluationId: number): void {
     this.loading.set(true);
-    // Simulate API call with mock data
-    setTimeout(() => {
-      this.deviceService.getRepairabilityAssessment({
-        type: 'SMARTPHONE',
-        brand: 'Apple',
-        model: 'iPhone 12'
-      }).subscribe(assessment => {
+
+    // Load evaluation details from API
+    this.evaluationService.getEvaluation(evaluationId).subscribe({
+      next: (evalData) => {
+        this.evaluation.set(evalData);
+        // Always fetch fresh repairability data from API
+        this.loadRepairabilityForEvaluation(evalData);
+      },
+      error: () => {
+        // Fallback: load default assessment
+        this.loadDefaultAssessment();
+      }
+    });
+  }
+
+  private loadRepairabilityForEvaluation(evalData: any): void {
+    // Use device info from evaluation to get repairability assessment
+    const request = {
+      type: evalData.device?.type || 'SMARTPHONE',
+      brand: evalData.device?.brand || '',
+      model: evalData.device?.model || '',
+      condition: evalData.device?.condition
+    };
+
+    this.deviceService.getRepairabilityAssessment(request).subscribe({
+      next: (assessment) => {
         this.assessment.set(assessment);
         this.loading.set(false);
-      });
-    }, 500);
+      },
+      error: () => {
+        this.loadDefaultAssessment();
+      }
+    });
+  }
+
+  private loadDefaultAssessment(): void {
+    this.loading.set(true);
+    // Fetch real data from API for default iPhone 14
+    this.deviceService.getRepairabilityAssessment({
+      type: 'SMARTPHONE',
+      brand: 'Apple',
+      model: 'iPhone 14'
+    }).subscribe({
+      next: (assessment) => {
+        this.assessment.set(assessment);
+        this.loading.set(false);
+      },
+      error: () => {
+        this.loading.set(false);
+      }
+    });
+  }
+
+  goBack(): void {
+    // Navigate back intelligently
+    if (this.evaluationId()) {
+      this.router.navigate(['/evaluation/history']);
+    } else {
+      this.router.navigate(['/evaluation']);
+    }
   }
 
   getGradeDescription(grade: string): string {

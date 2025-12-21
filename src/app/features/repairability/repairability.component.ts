@@ -1,5 +1,5 @@
 import { Component, inject, signal, OnInit } from '@angular/core';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe, Location } from '@angular/common';
 import { RouterLink, ActivatedRoute, Router } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -454,12 +454,17 @@ import { Evaluation } from '../../core/models/evaluation.model';
 
     .score-info {
       .grade-badge {
-        display: inline-block;
-        padding: 0.25rem 1rem;
-        border-radius: 16px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 1.25rem;
+        border-radius: 20px;
         color: white;
-        font-weight: 500;
+        font-weight: 600;
+        font-size: 1rem;
         margin-bottom: 0.5rem;
+        white-space: nowrap;
+        min-width: 90px;
       }
 
       .grade-description {
@@ -882,6 +887,7 @@ export class RepairabilityComponent implements OnInit {
   private evaluationService = inject(EvaluationService);
   private route = inject(ActivatedRoute);
   private router = inject(Router);
+  private location = inject(Location);
 
   loading = signal(false);
   assessment = signal<RepairabilityAssessment | null>(null);
@@ -968,12 +974,7 @@ export class RepairabilityComponent implements OnInit {
   }
 
   goBack(): void {
-    // Navigate back intelligently
-    if (this.evaluationId()) {
-      this.router.navigate(['/evaluation/history']);
-    } else {
-      this.router.navigate(['/evaluation']);
-    }
+    this.location.back();
   }
 
   getGradeDescription(grade: string): string {

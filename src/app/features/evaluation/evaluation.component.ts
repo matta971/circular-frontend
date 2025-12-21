@@ -694,10 +694,16 @@ import { forkJoin, of } from 'rxjs';
           }
 
           .condition-badge, .grade-badge {
-            padding: 0.125rem 0.5rem;
-            border-radius: 4px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.25rem 0.75rem;
+            border-radius: 6px;
             font-size: 0.875rem;
+            font-weight: 500;
             color: white;
+            white-space: nowrap;
+            min-width: fit-content;
           }
 
           .condition-new, .condition-excellent { background: #4caf50; }
@@ -852,11 +858,16 @@ import { forkJoin, of } from 'rxjs';
         }
 
         .grade-badge {
-          padding: 0.25rem 0.75rem;
-          border-radius: 12px;
-          font-size: 0.875rem;
-          font-weight: 500;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          padding: 0.4rem 1rem;
+          border-radius: 16px;
+          font-size: 0.9rem;
+          font-weight: 600;
           color: white;
+          white-space: nowrap;
+          min-width: 80px;
         }
 
         mat-divider {

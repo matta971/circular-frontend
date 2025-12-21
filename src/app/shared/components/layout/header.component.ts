@@ -121,7 +121,7 @@ import { NotificationService } from '../../../core/services/notification.service
       background: white;
       border-bottom: 1px solid var(--ce-gray-200);
       padding: 0 1.5rem;
-      height: 64px;
+      height: 100px;
     }
 
     .logo {
@@ -131,25 +131,27 @@ import { NotificationService } from '../../../core/services/notification.service
     }
 
     .logo-img {
-      height: 40px;
+      height: 160px;
       width: auto;
     }
 
     .nav-links {
       margin-left: 2rem;
       display: flex;
-      gap: 0.25rem;
+      gap: 0.5rem;
 
       a {
         color: var(--ce-gray-700);
         border-radius: var(--ce-radius-md);
         transition: all 0.2s ease;
+        font-size: 1.1rem;
+        padding: 0.5rem 1rem;
 
         mat-icon {
-          margin-right: 4px;
-          font-size: 20px;
-          height: 20px;
-          width: 20px;
+          margin-right: 6px;
+          font-size: 24px;
+          height: 24px;
+          width: 24px;
         }
 
         span {
@@ -175,9 +177,13 @@ import { NotificationService } from '../../../core/services/notification.service
     .wallet-btn {
       color: var(--ce-primary);
       margin-right: 0.5rem;
+      font-size: 1.1rem;
 
       mat-icon {
-        margin-right: 4px;
+        margin-right: 6px;
+        font-size: 24px;
+        height: 24px;
+        width: 24px;
       }
 
       .wallet-text {
@@ -188,6 +194,12 @@ import { NotificationService } from '../../../core/services/notification.service
     .notification-btn {
       color: var(--ce-gray-600);
 
+      mat-icon {
+        font-size: 28px;
+        height: 28px;
+        width: 28px;
+      }
+
       &:hover {
         color: var(--ce-primary);
       }
@@ -195,6 +207,12 @@ import { NotificationService } from '../../../core/services/notification.service
 
     .user-btn {
       color: var(--ce-gray-600);
+
+      mat-icon {
+        font-size: 28px;
+        height: 28px;
+        width: 28px;
+      }
 
       &:hover {
         color: var(--ce-primary);
@@ -204,11 +222,14 @@ import { NotificationService } from '../../../core/services/notification.service
     .login-btn {
       color: var(--ce-primary);
       font-weight: 500;
+      font-size: 1.1rem;
     }
 
     .register-btn {
       margin-left: 0.5rem;
       font-weight: 500;
+      font-size: 1.1rem;
+      padding: 0.5rem 1.25rem;
     }
 
     .user-info {

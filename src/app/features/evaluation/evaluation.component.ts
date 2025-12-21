@@ -1471,7 +1471,7 @@ export class EvaluationComponent {
             screenCracked: visionData?.condition?.screenState === 'CRACKED' || visionData?.condition?.screenState === 'SHATTERED' || draft.condition === DeviceCondition.BROKEN,
             batteryHealthPct: visionData?.condition?.estimatedBatteryHealthPct ?? this.getBatteryHealthFromCondition(draft.condition),
             waterDamage: visionData?.condition?.waterDamageIndicators ?? false,
-            marketReferenceEur: draftResult.estimatedValueMax ?? 100,
+            fetchMarketPrice: true,  // Let backend fetch from eBay API
             conditionNotes: visionData?.condition?.detailedNotes || draft.description,
             visionAnalysisId: visionData?.analysisId
           };
@@ -1484,10 +1484,14 @@ export class EvaluationComponent {
 
               // Mettre a jour les valeurs si disponibles
               if (evaluation.result) {
+                // Backend returns confidence as decimal (0.7 = 70%), convert to percentage
+                const rawConfidence = evaluation.result.confidence || 0.85;
+                const confidence = rawConfidence < 1 ? Math.round(rawConfidence * 100) : rawConfidence;
+
                 this.estimationResult.set({
                   minPrice: evaluation.result.indicativeBuybackEur || draftResult.estimatedValueMin || 0,
                   maxPrice: evaluation.result.marketReferenceEur || draftResult.estimatedValueMax || 0,
-                  confidence: evaluation.result.confidence || 85
+                  confidence
                 });
               }
 

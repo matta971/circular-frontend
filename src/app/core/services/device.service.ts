@@ -139,10 +139,17 @@ export class DeviceService {
     );
   }
 
-  // Repairability assessment
+  // Repairability assessment - uses market-price-service for iFixit scores
   getRepairabilityAssessment(request: RepairabilityRequest): Observable<RepairabilityAssessment> {
-    return this.http.post<ApiResponse<RepairabilityAssessment>>(`${this.aiUrl}/repairability`, request).pipe(
-      map(response => response.data),
+    const params: Record<string, string> = {};
+    if (request.brand) params['brand'] = request.brand;
+    if (request.model) params['model'] = request.model;
+    if (request.type) params['deviceType'] = request.type;
+
+    return this.http.get<{ score: number; normalizedScore: number; brand: string; model: string }>(
+      `${environment.apiUrl}/repairability/score`, { params }
+    ).pipe(
+      map(response => this.mapScoreToAssessment(response.score, request.brand, request.model)),
       catchError(() => {
         // Mock repairability assessment
         return of({
@@ -301,7 +308,7 @@ export class DeviceService {
     if (brand) params['brand'] = brand;
     if (model) params['model'] = model;
 
-    return this.http.get<MaterialValueResponse>(`${environment.apiUrl}/market-price/material-value`, { params }).pipe(
+    return this.http.get<MaterialValueResponse>(`${environment.apiUrl}/material-value`, { params }).pipe(
       catchError(() => {
         // Mock material value response
         return of(this.getMockMaterialValue(deviceType));
@@ -398,6 +405,96 @@ export class DeviceService {
         landfillAvoided: weight / 1000
       },
       warnings: []
+    };
+  }
+
+  // Map iFixit score (1-10) to full RepairabilityAssessment
+  private mapScoreToAssessment(score: number, brand?: string, model?: string): RepairabilityAssessment {
+    // Determine grade based on score (iFixit uses 1-10 scale)
+    const grade: 'A' | 'B' | 'C' | 'D' | 'E' = score >= 8 ? 'A' : score >= 6 ? 'B' : score >= 4 ? 'C' : 'D';
+
+    // Calculate sub-scores proportionally
+    const baseScore = score / 10; // Normalize to 0-1
+    const repairCost = score >= 6 ? 50 : 120;
+    const valueAfterRepair = 300;
+    const valueWithoutRepair = 150;
+
+    return {
+      repairabilityIndex: score,
+      repairabilityGrade: grade,
+      details: {
+        documentationScore: Math.min(2, baseScore * 2.5),
+        documentationComment: score >= 6 ? 'Documentation disponible' : 'Documentation limitée',
+        disassemblyScore: Math.min(2, baseScore * 2.2),
+        disassemblyComment: score >= 6 ? 'Démontage relativement accessible' : 'Démontage complexe',
+        sparePartsScore: Math.min(2, baseScore * 2),
+        sparePartsComment: score >= 6 ? 'Pièces disponibles' : 'Disponibilité des pièces limitée',
+        sparePartsAvailabilityYears: Math.max(2, Math.round(score / 2)),
+        sparePartsPriceScore: Math.min(2, baseScore * 2.3),
+        sparePartsPriceComment: 'Prix variables selon les fournisseurs',
+        specificCriteriaScore: Math.min(2, baseScore * 2),
+        specificCriteriaComment: 'Évaluation basée sur les données iFixit'
+      },
+      faultDiagnoses: [
+        {
+          faultType: 'BATTERY',
+          faultName: 'Usure de la batterie',
+          description: 'Capacité réduite après usage prolongé',
+          probability: 0.6,
+          severity: 'MEDIUM',
+          estimatedRepairCost: score >= 6 ? 39.90 : 69.90,
+          estimatedRepairTimeMinutes: score >= 6 ? 30 : 60,
+          selfRepairable: score >= 6,
+          repairDifficulty: score >= 6 ? 'EASY' : 'MEDIUM'
+        },
+        {
+          faultType: 'SCREEN',
+          faultName: 'Remplacement écran',
+          description: 'Écran fissuré ou défaillant',
+          probability: 0.4,
+          severity: 'HIGH',
+          estimatedRepairCost: score >= 6 ? 89.90 : 199.90,
+          estimatedRepairTimeMinutes: score >= 6 ? 45 : 90,
+          selfRepairable: score >= 7,
+          repairDifficulty: score >= 7 ? 'MEDIUM' : 'HARD'
+        }
+      ],
+      repairPartners: [
+        {
+          id: 1,
+          name: 'iFixit',
+          type: 'SELF_REPAIR',
+          address: 'En ligne',
+          city: 'San Luis Obispo',
+          postalCode: '93401',
+          latitude: 35.28,
+          longitude: -120.66,
+          distanceKm: 0,
+          rating: 4.8,
+          reviewCount: 15000,
+          estimatedCostMin: 30,
+          estimatedCostMax: 150,
+          estimatedDelayDays: 5,
+          certifications: ['Official Parts'],
+          warrantyProvided: true,
+          phoneNumber: '',
+          website: 'https://www.ifixit.com'
+        }
+      ],
+      recommendation: {
+        action: score >= 6 ? 'REPAIR' : score >= 4 ? 'REFURBISH' : 'RECYCLE',
+        reason: score >= 6
+          ? `Score iFixit ${score}/10 - Réparation recommandée`
+          : score >= 4
+            ? `Score iFixit ${score}/10 - Reconditionnement possible`
+            : `Score iFixit ${score}/10 - Recyclage conseillé`,
+        repairCostEstimate: repairCost,
+        valueAfterRepair: valueAfterRepair,
+        valueWithoutRepair: valueWithoutRepair,
+        repairProfitability: (valueAfterRepair - repairCost) / valueWithoutRepair,
+        environmentallyRecommended: true,
+        co2SavedKg: score >= 6 ? 30 : 15
+      }
     };
   }
 }

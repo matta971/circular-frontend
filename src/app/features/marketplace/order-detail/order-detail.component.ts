@@ -9,8 +9,11 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatStepperModule } from '@angular/material/stepper';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MarketplaceService, AuthService } from '../../../core/services';
 import { P2POrder, OrderStatus, Shipment, PaymentTransaction } from '../../../core/models';
+import { DisputeDialogComponent } from '../dispute-dialog/dispute-dialog.component';
+import { PaymentDialogComponent } from '../payment-dialog/payment-dialog.component';
 
 @Component({
   selector: 'app-order-detail',
@@ -25,7 +28,8 @@ import { P2POrder, OrderStatus, Shipment, PaymentTransaction } from '../../../co
     MatDividerModule,
     MatStepperModule,
     MatProgressSpinnerModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatDialogModule
   ],
   template: `
     @if (loading) {
@@ -179,6 +183,52 @@ import { P2POrder, OrderStatus, Shipment, PaymentTransaction } from '../../../co
           </mat-card>
         </div>
 
+        <!-- Escrow Info (when in escrow) -->
+        @if (order.status === 'PAID_ESCROW') {
+          <mat-card class="escrow-card">
+            <mat-card-content>
+              <div class="escrow-status">
+                <mat-icon>security</mat-icon>
+                <div>
+                  <strong>Paiement sécurisé en Escrow</strong>
+                  <p>Les fonds de {{ order.totalAmount | currency:'EUR' }} sont protégés jusqu'à la confirmation de réception.</p>
+                </div>
+              </div>
+              <div class="escrow-timeline">
+                <div class="timeline-item active">
+                  <mat-icon>check_circle</mat-icon>
+                  <span>Paiement reçu</span>
+                </div>
+                <div class="timeline-divider"></div>
+                <div class="timeline-item">
+                  <mat-icon>radio_button_unchecked</mat-icon>
+                  <span>Expédition</span>
+                </div>
+                <div class="timeline-divider"></div>
+                <div class="timeline-item">
+                  <mat-icon>radio_button_unchecked</mat-icon>
+                  <span>Libération des fonds</span>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+
+        <!-- Disputed Info -->
+        @if (order.status === 'DISPUTED') {
+          <mat-card class="dispute-card">
+            <mat-card-content>
+              <div class="dispute-status">
+                <mat-icon color="warn">gavel</mat-icon>
+                <div>
+                  <strong>Litige en cours</strong>
+                  <p>Un litige a été ouvert sur cette commande. Les fonds restent bloqués jusqu'à la résolution.</p>
+                </div>
+              </div>
+            </mat-card-content>
+          </mat-card>
+        }
+
         <!-- Actions -->
         <mat-card class="actions-card">
           <mat-card-content>
@@ -239,8 +289,23 @@ import { P2POrder, OrderStatus, Shipment, PaymentTransaction } from '../../../co
     mat-chip.delivered { background: #03a9f4 !important; color: white !important; }
     mat-chip.completed { background: #4caf50 !important; color: white !important; }
     mat-chip.cancelled, mat-chip.refunded { background: #f44336 !important; color: white !important; }
+    mat-chip.disputed { background: #ff5722 !important; color: white !important; }
     .loading, .error { display: flex; flex-direction: column; align-items: center; padding: 64px; text-align: center; }
     .error mat-icon { font-size: 64px; width: 64px; height: 64px; color: #f44336; margin-bottom: 16px; }
+    .escrow-card, .dispute-card { margin-bottom: 24px; }
+    .escrow-card { background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%); }
+    .escrow-status, .dispute-status { display: flex; gap: 16px; align-items: flex-start; margin-bottom: 16px; }
+    .escrow-status mat-icon { color: #4caf50; font-size: 32px; width: 32px; height: 32px; }
+    .escrow-status p, .dispute-status p { margin: 4px 0 0 0; color: #666; font-size: 14px; }
+    .escrow-timeline { display: flex; align-items: center; justify-content: center; padding: 16px 0; }
+    .timeline-item { display: flex; flex-direction: column; align-items: center; gap: 4px; color: #9e9e9e; }
+    .timeline-item.active { color: #4caf50; }
+    .timeline-item.active mat-icon { color: #4caf50; }
+    .timeline-item mat-icon { font-size: 24px; width: 24px; height: 24px; }
+    .timeline-item span { font-size: 12px; }
+    .timeline-divider { width: 60px; height: 2px; background: #e0e0e0; margin: 0 8px; }
+    .dispute-card { background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%); }
+    .dispute-status mat-icon { font-size: 32px; width: 32px; height: 32px; }
     @media (max-width: 768px) { .content-grid { grid-template-columns: 1fr; } }
   `]
 })
@@ -258,7 +323,8 @@ export class OrderDetailComponent implements OnInit {
     private router: Router,
     private marketplaceService: MarketplaceService,
     private authService: AuthService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -303,12 +369,18 @@ export class OrderDetailComponent implements OnInit {
 
   pay(): void {
     if (!this.order) return;
-    this.marketplaceService.payOrder(this.order.id).subscribe({
-      next: () => {
-        this.snackBar.open('Paiement effectué', 'OK', { duration: 2000 });
+
+    const dialogRef = this.dialog.open(PaymentDialogComponent, {
+      width: '500px',
+      disableClose: true,
+      data: { order: this.order }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.snackBar.open('Paiement effectué avec succès !', 'OK', { duration: 3000 });
         this.loadOrder(this.order!.id);
-      },
-      error: () => { this.snackBar.open('Erreur de paiement', 'OK', { duration: 3000 }); }
+      }
     });
   }
 
@@ -347,7 +419,20 @@ export class OrderDetailComponent implements OnInit {
   }
 
   openDispute(): void {
-    this.snackBar.open('Redirection vers le formulaire de litige...', 'OK', { duration: 2000 });
+    if (!this.order) return;
+
+    const dialogRef = this.dialog.open(DisputeDialogComponent, {
+      width: '550px',
+      disableClose: true,
+      data: { order: this.order }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.snackBar.open('Litige créé. Le vendeur a été notifié.', 'OK', { duration: 3000 });
+        this.loadOrder(this.order!.id);
+      }
+    });
   }
 
   getStatusLabel(status: OrderStatus | string): string {

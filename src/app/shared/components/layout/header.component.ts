@@ -25,43 +25,64 @@ import { NotificationService } from '../../../core/services/notification.service
     MatBadgeModule
   ],
   template: `
-    <mat-toolbar color="primary">
+    <mat-toolbar class="header-toolbar">
       <a routerLink="/" class="logo">
-        <span>Circular Electronics</span>
+        <img src="logo.svg" alt="Circular Electronics" class="logo-img" />
       </a>
 
       <nav class="nav-links">
-        <a mat-button routerLink="/evaluation" routerLinkActive="active">Évaluer</a>
-        <a mat-button routerLink="/marketplace" routerLinkActive="active">Marketplace</a>
-        <a mat-button routerLink="/collection" routerLinkActive="active">Collecte</a>
-        <a mat-button routerLink="/deposit" routerLinkActive="active">Dépôt</a>
+        <a mat-button routerLink="/evaluation" routerLinkActive="active">
+          <mat-icon>assessment</mat-icon>
+          <span>Évaluer</span>
+        </a>
+        <a mat-button routerLink="/marketplace" routerLinkActive="active">
+          <mat-icon>storefront</mat-icon>
+          <span>Marketplace</span>
+        </a>
+        <a mat-button routerLink="/collection" routerLinkActive="active">
+          <mat-icon>inventory_2</mat-icon>
+          <span>Collecte</span>
+        </a>
+        <a mat-button routerLink="/deposit" routerLinkActive="active">
+          <mat-icon>place</mat-icon>
+          <span>Dépôt</span>
+        </a>
       </nav>
 
       <span class="spacer"></span>
 
       @if (authService.isAuthenticated()) {
-        <a mat-button routerLink="/wallet">
+        <a mat-button routerLink="/wallet" class="wallet-btn">
           <mat-icon>account_balance_wallet</mat-icon>
-          Mon Wallet
+          <span class="wallet-text">Mon Wallet</span>
         </a>
 
-        <a mat-icon-button routerLink="/notifications"
+        <button mat-icon-button routerLink="/notifications" class="notification-btn"
           [matBadge]="unreadCount > 0 ? unreadCount : null"
           matBadgeColor="warn"
           matBadgeSize="small">
           <mat-icon>notifications</mat-icon>
-        </a>
+        </button>
 
-        <button mat-icon-button [matMenuTriggerFor]="userMenu">
+        <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-btn">
           <mat-icon>account_circle</mat-icon>
         </button>
 
-        <mat-menu #userMenu="matMenu">
+        <mat-menu #userMenu="matMenu" class="user-menu">
           <div class="user-info">
-            <p>{{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}</p>
-            <small>{{ authService.currentUser()?.email }}</small>
+            <div class="user-avatar">
+              <mat-icon>person</mat-icon>
+            </div>
+            <div class="user-details">
+              <p class="user-name">{{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}</p>
+              <small class="user-email">{{ authService.currentUser()?.email }}</small>
+            </div>
           </div>
           <mat-divider></mat-divider>
+          <a mat-menu-item routerLink="/evaluation/my-evaluations">
+            <mat-icon>assessment</mat-icon>
+            Mes évaluations
+          </a>
           <a mat-menu-item routerLink="/marketplace/my-listings">
             <mat-icon>storefront</mat-icon>
             Mes annonces
@@ -81,51 +102,161 @@ import { NotificationService } from '../../../core/services/notification.service
               Administration
             </a>
           }
-          <button mat-menu-item (click)="authService.logout()">
+          <button mat-menu-item (click)="authService.logout()" class="logout-btn">
             <mat-icon>logout</mat-icon>
             Déconnexion
           </button>
         </mat-menu>
       } @else {
-        <a mat-button routerLink="/auth/login">Connexion</a>
-        <a mat-raised-button routerLink="/auth/register">Inscription</a>
+        <a mat-button routerLink="/auth/login" class="login-btn">Connexion</a>
+        <a mat-raised-button color="primary" routerLink="/auth/register" class="register-btn">Inscription</a>
       }
     </mat-toolbar>
   `,
   styles: [`
-    mat-toolbar {
+    .header-toolbar {
       position: sticky;
       top: 0;
       z-index: 1000;
+      background: white;
+      border-bottom: 1px solid var(--ce-gray-200);
+      padding: 0 1.5rem;
+      height: 64px;
     }
 
     .logo {
+      display: flex;
+      align-items: center;
       text-decoration: none;
-      color: inherit;
-      font-weight: 600;
-      font-size: 1.2rem;
+    }
+
+    .logo-img {
+      height: 40px;
+      width: auto;
     }
 
     .nav-links {
       margin-left: 2rem;
-    }
+      display: flex;
+      gap: 0.25rem;
 
-    .nav-links a.active {
-      background: rgba(255, 255, 255, 0.1);
+      a {
+        color: var(--ce-gray-700);
+        border-radius: var(--ce-radius-md);
+        transition: all 0.2s ease;
+
+        mat-icon {
+          margin-right: 4px;
+          font-size: 20px;
+          height: 20px;
+          width: 20px;
+        }
+
+        span {
+          font-weight: 500;
+        }
+
+        &:hover {
+          background: var(--ce-gray-100);
+          color: var(--ce-primary);
+        }
+
+        &.active {
+          background: rgba(26, 31, 216, 0.08);
+          color: var(--ce-primary);
+        }
+      }
     }
 
     .spacer {
       flex: 1;
     }
 
-    .user-info {
-      padding: 1rem;
-      p {
-        margin: 0;
+    .wallet-btn {
+      color: var(--ce-primary);
+      margin-right: 0.5rem;
+
+      mat-icon {
+        margin-right: 4px;
+      }
+
+      .wallet-text {
         font-weight: 500;
       }
-      small {
-        color: rgba(0, 0, 0, 0.6);
+    }
+
+    .notification-btn {
+      color: var(--ce-gray-600);
+
+      &:hover {
+        color: var(--ce-primary);
+      }
+    }
+
+    .user-btn {
+      color: var(--ce-gray-600);
+
+      &:hover {
+        color: var(--ce-primary);
+      }
+    }
+
+    .login-btn {
+      color: var(--ce-primary);
+      font-weight: 500;
+    }
+
+    .register-btn {
+      margin-left: 0.5rem;
+      font-weight: 500;
+    }
+
+    .user-info {
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+
+      .user-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: var(--ce-primary);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        mat-icon {
+          color: white;
+        }
+      }
+
+      .user-details {
+        .user-name {
+          margin: 0;
+          font-weight: 600;
+          color: var(--ce-black);
+        }
+
+        .user-email {
+          color: var(--ce-gray-600);
+          font-size: 12px;
+        }
+      }
+    }
+
+    .logout-btn {
+      color: var(--ce-error);
+    }
+
+    // Responsive
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .wallet-text {
+        display: none;
       }
     }
   `]

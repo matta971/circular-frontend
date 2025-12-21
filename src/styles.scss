@@ -1,9 +1,227 @@
 @use '@angular/material' as mat;
 
+// ============================================
+// CIRCULAR ELECTRONICS - CHARTE GRAPHIQUE
+// ============================================
+
+// Google Fonts - Poppins
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+// ============================================
+// CSS VARIABLES - Brand Colors
+// ============================================
+:root {
+  // Couleur principale - Bleu
+  --ce-primary: #1a1fd8;
+  --ce-primary-light: #474bfe;
+  --ce-primary-dark: #1519a8;
+
+  // Couleur secondaire - Vert
+  --ce-secondary: #19e166;
+  --ce-secondary-light: #4aea8a;
+  --ce-secondary-dark: #12b050;
+
+  // Couleur complémentaire - Rose/Beige
+  --ce-accent: #eab6aa;
+  --ce-accent-light: #f2d4cc;
+  --ce-accent-dark: #d49a8c;
+
+  // Neutrals
+  --ce-white: #ffffff;
+  --ce-black: #1a1a1a;
+  --ce-gray-50: #fafafa;
+  --ce-gray-100: #f5f5f5;
+  --ce-gray-200: #eeeeee;
+  --ce-gray-300: #e0e0e0;
+  --ce-gray-400: #bdbdbd;
+  --ce-gray-500: #9e9e9e;
+  --ce-gray-600: #757575;
+  --ce-gray-700: #616161;
+  --ce-gray-800: #424242;
+  --ce-gray-900: #212121;
+
+  // Semantic colors
+  --ce-success: #19e166;
+  --ce-warning: #ffc107;
+  --ce-error: #f44336;
+  --ce-info: #2196f3;
+
+  // Typography
+  --ce-font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+  // Spacing
+  --ce-spacing-xs: 0.25rem;
+  --ce-spacing-sm: 0.5rem;
+  --ce-spacing-md: 1rem;
+  --ce-spacing-lg: 1.5rem;
+  --ce-spacing-xl: 2rem;
+  --ce-spacing-2xl: 3rem;
+
+  // Border radius
+  --ce-radius-sm: 4px;
+  --ce-radius-md: 8px;
+  --ce-radius-lg: 12px;
+  --ce-radius-xl: 16px;
+  --ce-radius-full: 9999px;
+
+  // Shadows
+  --ce-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --ce-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --ce-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --ce-shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.15);
+}
+
+// ============================================
+// ANGULAR MATERIAL THEME - Custom Circular
+// ============================================
+
+// Define custom palettes based on Circular brand colors
+$circular-primary-palette: (
+  50: #e4e4fb,
+  100: #bcbdf5,
+  200: #9091ee,
+  300: #6465e7,
+  400: #4244e1,
+  500: #1a1fd8,
+  600: #171bcf,
+  700: #1316c4,
+  800: #0f12ba,
+  900: #0509a8,
+  A100: #d6d7ff,
+  A200: #a3a5ff,
+  A400: #7073ff,
+  A700: #575aff,
+  contrast: (
+    50: rgba(0, 0, 0, 0.87),
+    100: rgba(0, 0, 0, 0.87),
+    200: rgba(0, 0, 0, 0.87),
+    300: white,
+    400: white,
+    500: white,
+    600: white,
+    700: white,
+    800: white,
+    900: white,
+    A100: rgba(0, 0, 0, 0.87),
+    A200: rgba(0, 0, 0, 0.87),
+    A400: white,
+    A700: white,
+  )
+);
+
+$circular-secondary-palette: (
+  50: #e3fced,
+  100: #baf8d2,
+  200: #8cf3b4,
+  300: #5eef96,
+  400: #3ceb80,
+  500: #19e166,
+  600: #16cd5c,
+  700: #12b050,
+  800: #0e9544,
+  900: #086a30,
+  A100: #b3ffce,
+  A200: #80ffad,
+  A400: #4dff8c,
+  A700: #33ff7c,
+  contrast: (
+    50: rgba(0, 0, 0, 0.87),
+    100: rgba(0, 0, 0, 0.87),
+    200: rgba(0, 0, 0, 0.87),
+    300: rgba(0, 0, 0, 0.87),
+    400: rgba(0, 0, 0, 0.87),
+    500: rgba(0, 0, 0, 0.87),
+    600: rgba(0, 0, 0, 0.87),
+    700: white,
+    800: white,
+    900: white,
+    A100: rgba(0, 0, 0, 0.87),
+    A200: rgba(0, 0, 0, 0.87),
+    A400: rgba(0, 0, 0, 0.87),
+    A700: rgba(0, 0, 0, 0.87),
+  )
+);
+
+$circular-accent-palette: (
+  50: #fdf5f3,
+  100: #fae5e0,
+  200: #f6d4cc,
+  300: #f2c2b7,
+  400: #efb5a7,
+  500: #eab6aa,
+  600: #e5a093,
+  700: #dc8978,
+  800: #d3735e,
+  900: #c45b43,
+  A100: #ffffff,
+  A200: #fff5f3,
+  A400: #ffcdc4,
+  A700: #ffb9ab,
+  contrast: (
+    50: rgba(0, 0, 0, 0.87),
+    100: rgba(0, 0, 0, 0.87),
+    200: rgba(0, 0, 0, 0.87),
+    300: rgba(0, 0, 0, 0.87),
+    400: rgba(0, 0, 0, 0.87),
+    500: rgba(0, 0, 0, 0.87),
+    600: rgba(0, 0, 0, 0.87),
+    700: rgba(0, 0, 0, 0.87),
+    800: white,
+    900: white,
+    A100: rgba(0, 0, 0, 0.87),
+    A200: rgba(0, 0, 0, 0.87),
+    A400: rgba(0, 0, 0, 0.87),
+    A700: rgba(0, 0, 0, 0.87),
+  )
+);
+
+// Create the theme
+$circular-primary: mat.m2-define-palette($circular-primary-palette);
+$circular-accent: mat.m2-define-palette($circular-secondary-palette);
+$circular-warn: mat.m2-define-palette(mat.$m2-red-palette);
+
+// Custom typography with Poppins
+$circular-typography: mat.m2-define-typography-config(
+  $font-family: 'Poppins, sans-serif',
+  $headline-1: mat.m2-define-typography-level(96px, 96px, 300, $letter-spacing: -1.5px),
+  $headline-2: mat.m2-define-typography-level(60px, 60px, 300, $letter-spacing: -0.5px),
+  $headline-3: mat.m2-define-typography-level(48px, 50px, 400),
+  $headline-4: mat.m2-define-typography-level(34px, 40px, 400, $letter-spacing: 0.25px),
+  $headline-5: mat.m2-define-typography-level(24px, 32px, 600),
+  $headline-6: mat.m2-define-typography-level(20px, 32px, 600, $letter-spacing: 0.15px),
+  $subtitle-1: mat.m2-define-typography-level(16px, 28px, 500, $letter-spacing: 0.15px),
+  $subtitle-2: mat.m2-define-typography-level(14px, 22px, 500, $letter-spacing: 0.1px),
+  $body-1: mat.m2-define-typography-level(16px, 24px, 400, $letter-spacing: 0.5px),
+  $body-2: mat.m2-define-typography-level(14px, 20px, 400, $letter-spacing: 0.25px),
+  $caption: mat.m2-define-typography-level(12px, 20px, 400, $letter-spacing: 0.4px),
+  $button: mat.m2-define-typography-level(14px, 36px, 500, $letter-spacing: 0.5px),
+);
+
+$circular-theme: mat.m2-define-light-theme((
+  color: (
+    primary: $circular-primary,
+    accent: $circular-accent,
+    warn: $circular-warn,
+  ),
+  typography: $circular-typography,
+  density: 0,
+));
+
+// Include Angular Material core and theme
+@include mat.core();
+@include mat.all-component-themes($circular-theme);
+
+// ============================================
+// BASE STYLES
+// ============================================
 html, body {
   height: 100%;
   margin: 0;
-  font-family: Roboto, "Helvetica Neue", sans-serif;
+  font-family: var(--ce-font-family);
+  background-color: var(--ce-gray-50);
+  color: var(--ce-black);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 * {
@@ -11,5 +229,193 @@ html, body {
 }
 
 a {
-  color: inherit;
+  color: var(--ce-primary);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+// ============================================
+// TYPOGRAPHY UTILITIES
+// ============================================
+.text-primary { color: var(--ce-primary) !important; }
+.text-secondary { color: var(--ce-secondary) !important; }
+.text-accent { color: var(--ce-accent) !important; }
+.text-success { color: var(--ce-success) !important; }
+.text-warning { color: var(--ce-warning) !important; }
+.text-error { color: var(--ce-error) !important; }
+.text-muted { color: var(--ce-gray-600) !important; }
+
+.font-light { font-weight: 300 !important; }
+.font-regular { font-weight: 400 !important; }
+.font-medium { font-weight: 500 !important; }
+.font-semibold { font-weight: 600 !important; }
+.font-bold { font-weight: 700 !important; }
+
+// ============================================
+// BACKGROUND UTILITIES
+// ============================================
+.bg-primary { background-color: var(--ce-primary) !important; }
+.bg-secondary { background-color: var(--ce-secondary) !important; }
+.bg-accent { background-color: var(--ce-accent) !important; }
+.bg-white { background-color: var(--ce-white) !important; }
+.bg-gray-50 { background-color: var(--ce-gray-50) !important; }
+.bg-gray-100 { background-color: var(--ce-gray-100) !important; }
+
+// ============================================
+// CUSTOM BUTTON STYLES
+// ============================================
+.btn-circular {
+  background: linear-gradient(135deg, var(--ce-primary) 0%, var(--ce-primary-light) 100%);
+  color: white;
+  border: none;
+  border-radius: var(--ce-radius-md);
+  padding: var(--ce-spacing-sm) var(--ce-spacing-lg);
+  font-family: var(--ce-font-family);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ce-shadow-md);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.btn-circular-outline {
+  background: transparent;
+  color: var(--ce-primary);
+  border: 2px solid var(--ce-primary);
+  border-radius: var(--ce-radius-md);
+  padding: var(--ce-spacing-sm) var(--ce-spacing-lg);
+  font-family: var(--ce-font-family);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--ce-primary);
+    color: white;
+  }
+}
+
+.btn-circular-secondary {
+  background: var(--ce-secondary);
+  color: var(--ce-black);
+  border: none;
+  border-radius: var(--ce-radius-md);
+  padding: var(--ce-spacing-sm) var(--ce-spacing-lg);
+  font-family: var(--ce-font-family);
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: var(--ce-secondary-dark);
+  }
+}
+
+// ============================================
+// CARD STYLES
+// ============================================
+.card-circular {
+  background: var(--ce-white);
+  border-radius: var(--ce-radius-lg);
+  box-shadow: var(--ce-shadow-sm);
+  padding: var(--ce-spacing-lg);
+  transition: box-shadow 0.2s ease;
+
+  &:hover {
+    box-shadow: var(--ce-shadow-md);
+  }
+}
+
+// ============================================
+// MATERIAL OVERRIDES
+// ============================================
+.mat-mdc-raised-button.mat-primary {
+  --mdc-protected-button-container-color: var(--ce-primary);
+}
+
+.mat-mdc-fab.mat-primary {
+  --mdc-fab-container-color: var(--ce-primary);
+}
+
+.mat-mdc-mini-fab.mat-primary {
+  --mdc-fab-small-container-color: var(--ce-primary);
+}
+
+// Chips with secondary color
+.mat-mdc-chip.mat-mdc-chip-selected {
+  --mdc-chip-elevated-selected-container-color: var(--ce-secondary);
+}
+
+// Progress bar
+.mat-mdc-progress-bar {
+  --mdc-linear-progress-active-indicator-color: var(--ce-primary);
+}
+
+// Stepper
+.mat-step-header .mat-step-icon-selected {
+  background-color: var(--ce-primary);
+}
+
+.mat-step-header .mat-step-icon-state-done {
+  background-color: var(--ce-secondary);
+}
+
+// ============================================
+// GRADE BADGES (for repairability, condition)
+// ============================================
+.grade-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--ce-radius-sm);
+  font-weight: 600;
+  font-size: 14px;
+
+  &.grade-a {
+    background-color: var(--ce-secondary);
+    color: var(--ce-black);
+  }
+
+  &.grade-b {
+    background-color: #8bc34a;
+    color: var(--ce-black);
+  }
+
+  &.grade-c {
+    background-color: var(--ce-warning);
+    color: var(--ce-black);
+  }
+
+  &.grade-d {
+    background-color: #ff9800;
+    color: white;
+  }
+
+  &.grade-e, &.grade-f {
+    background-color: var(--ce-error);
+    color: white;
+  }
+}
+
+// ============================================
+// RESPONSIVE UTILITIES
+// ============================================
+@media (max-width: 768px) {
+  :root {
+    --ce-spacing-lg: 1rem;
+    --ce-spacing-xl: 1.5rem;
+    --ce-spacing-2xl: 2rem;
+  }
 }

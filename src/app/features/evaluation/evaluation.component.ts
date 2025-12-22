@@ -1,4 +1,4 @@
-import { Component, inject, signal, ViewChild } from '@angular/core';
+import { Component, inject, signal, ViewChild, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -13,12 +13,15 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { DeviceService } from '../../core/services/device.service';
+import { DeviceAutocompleteService } from '../../core/services/device-autocomplete.service';
 import { EvaluationService } from '../../core/services/evaluation.service';
 import { AuthService } from '../../core/services/auth.service';
 import { DeviceCondition, CreateDeviceDraftRequest, RepairabilityAssessment, VisionAnalysisResult, MaterialValueResponse } from '../../core/models';
 import { EvaluationSource, CreateEvaluationRequest } from '../../core/models/evaluation.model';
-import { forkJoin, of } from 'rxjs';
+import { forkJoin, of, Observable } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, startWith } from 'rxjs/operators';
 
 @Component({
   selector: 'app-evaluation',
@@ -37,7 +40,8 @@ import { forkJoin, of } from 'rxjs';
     MatProgressSpinnerModule,
     MatChipsModule,
     MatTooltipModule,
-    MatDividerModule
+    MatDividerModule,
+    MatAutocompleteModule
   ],
   template: `
     <div class="evaluation-container">
@@ -75,20 +79,34 @@ import { forkJoin, of } from 'rxjs';
             <div class="form-row">
               <mat-form-field appearance="outline">
                 <mat-label>Marque</mat-label>
-                <input matInput formControlName="brand" placeholder="Ex: Apple, Samsung...">
+                <input matInput
+                       formControlName="brand"
+                       placeholder="Ex: Apple, Samsung..."
+                       [matAutocomplete]="brandAuto"
+                       (input)="onBrandInput($event)">
+                <mat-autocomplete #brandAuto="matAutocomplete" (optionSelected)="onBrandSelected($event.option.value)">
+                  @for (brand of filteredBrands(); track brand) {
+                    <mat-option [value]="brand">{{ brand }}</mat-option>
+                  }
+                </mat-autocomplete>
+                <mat-hint>Commencez à taper pour voir les suggestions</mat-hint>
               </mat-form-field>
 
               <mat-form-field appearance="outline">
                 <mat-label>Modèle</mat-label>
-                <input matInput formControlName="model" placeholder="Ex: iPhone 14, Galaxy S23...">
+                <input matInput
+                       formControlName="model"
+                       placeholder="Ex: iPhone 14, Galaxy S23..."
+                       [matAutocomplete]="modelAuto"
+                       (input)="onModelInput($event)">
+                <mat-autocomplete #modelAuto="matAutocomplete" (optionSelected)="onModelSelected($event.option.value)">
+                  @for (model of filteredModels(); track model) {
+                    <mat-option [value]="model">{{ model }}</mat-option>
+                  }
+                </mat-autocomplete>
+                <mat-hint>{{ modelHint }}</mat-hint>
               </mat-form-field>
             </div>
-
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Description (optionnel)</mat-label>
-              <textarea matInput formControlName="description" rows="3"
-                placeholder="Détails supplémentaires sur l'appareil..."></textarea>
-            </mat-form-field>
 
             <div class="step-actions">
               <button mat-button matStepperPrevious>Retour</button>
@@ -117,6 +135,21 @@ import { forkJoin, of } from 'rxjs';
                 </mat-card>
               }
             </div>
+
+            <div class="description-section">
+              <h4><mat-icon>description</mat-icon> Décrivez les problèmes de votre appareil</h4>
+              <p class="description-hint">
+                Notre IA analysera votre description pour évaluer précisément l'état,
+                les réparations nécessaires et la valeur de votre appareil.
+              </p>
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Description des problèmes (optionnel)</mat-label>
+                <textarea matInput formControlName="description" rows="4"
+                  placeholder="Ex: L'écran a une fissure en haut à droite, la batterie ne tient plus que 2h, le bouton volume ne fonctionne plus, quelques rayures sur le dos..."></textarea>
+                <mat-hint>Plus votre description est détaillée, plus l'évaluation sera précise</mat-hint>
+              </mat-form-field>
+            </div>
+
             <div class="step-actions">
               <button mat-button matStepperPrevious>Retour</button>
               <button mat-raised-button color="primary" matStepperNext [disabled]="conditionForm.invalid">
@@ -530,6 +563,39 @@ import { forkJoin, of } from 'rxjs';
       display: flex;
       gap: 1rem;
       margin-top: 1rem;
+    }
+
+    .description-section {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      background: linear-gradient(135deg, #f5f5f5 0%, #e8f5e9 100%);
+      border-radius: 12px;
+      border: 1px solid rgba(76, 175, 80, 0.2);
+
+      h4 {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin: 0 0 0.5rem;
+        color: var(--ce-primary, #1a1fd8);
+        font-size: 1.1rem;
+
+        mat-icon {
+          color: var(--ce-secondary, #19e166);
+        }
+      }
+
+      .description-hint {
+        margin: 0 0 1rem;
+        font-size: 0.9rem;
+        color: rgba(0, 0, 0, 0.6);
+        line-height: 1.5;
+      }
+
+      mat-form-field {
+        background: white;
+        border-radius: 8px;
+      }
     }
 
     .photo-upload {
@@ -1215,13 +1281,25 @@ import { forkJoin, of } from 'rxjs';
     }
   `]
 })
-export class EvaluationComponent {
+export class EvaluationComponent implements OnInit {
   private fb = inject(FormBuilder);
   private deviceService = inject(DeviceService);
+  private deviceAutocompleteService = inject(DeviceAutocompleteService);
   private evaluationService = inject(EvaluationService);
   private authService = inject(AuthService);
 
   @ViewChild('stepper') stepper!: MatStepper;
+
+  // Autocomplete signals
+  filteredBrands = signal<string[]>([]);
+  filteredModels = signal<string[]>([]);
+
+  // Getter for model hint
+  get modelHint(): string {
+    return this.deviceForm?.controls.brand.value
+      ? 'Commencez à taper pour voir les modèles'
+      : 'Sélectionnez d\'abord une marque';
+  }
 
   deviceTypes = [
     { value: 'SMARTPHONE', label: 'Smartphone', icon: 'smartphone' },
@@ -1271,12 +1349,12 @@ export class EvaluationComponent {
 
   deviceForm = this.fb.group({
     brand: ['', Validators.required],
-    model: ['', Validators.required],
-    description: ['']
+    model: ['', Validators.required]
   });
 
   conditionForm = this.fb.group({
-    condition: ['', Validators.required]
+    condition: ['', Validators.required],
+    description: ['']
   });
 
   loading = signal(false);
@@ -1288,12 +1366,75 @@ export class EvaluationComponent {
   materialValueResult = signal<MaterialValueResponse | null>(null);
   currentEvaluationId = signal<number | null>(null);
 
+  ngOnInit(): void {
+    // Load initial brands when type is selected
+    this.typeForm.controls.type.valueChanges.subscribe(type => {
+      if (type) {
+        this.loadBrands(type);
+        // Reset brand and model when type changes
+        this.deviceForm.controls.brand.setValue('');
+        this.deviceForm.controls.model.setValue('');
+        this.filteredModels.set([]);
+      }
+    });
+  }
+
   selectType(type: string): void {
     this.typeForm.controls.type.setValue(type);
   }
 
   selectCondition(condition: string): void {
     this.conditionForm.controls.condition.setValue(condition);
+  }
+
+  // Autocomplete methods
+  private loadBrands(type: string, query?: string): void {
+    this.deviceAutocompleteService.getBrands(type, query).subscribe(brands => {
+      this.filteredBrands.set(brands);
+    });
+  }
+
+  private loadModels(type: string, brand: string, query?: string): void {
+    this.deviceAutocompleteService.getModels(type, brand, query).subscribe(models => {
+      this.filteredModels.set(models);
+    });
+  }
+
+  onBrandInput(event: Event): void {
+    const input = (event.target as HTMLInputElement).value;
+    const type = this.typeForm.controls.type.value;
+    if (type) {
+      this.loadBrands(type, input);
+    }
+    // Clear model when brand changes
+    this.filteredModels.set([]);
+  }
+
+  onModelInput(event: Event): void {
+    const input = (event.target as HTMLInputElement).value;
+    const type = this.typeForm.controls.type.value;
+    const brand = this.deviceForm.controls.brand.value;
+    if (type && brand) {
+      this.loadModels(type, brand, input);
+    }
+  }
+
+  onBrandSelected(brand: string): void {
+    const type = this.typeForm.controls.type.value;
+    if (type && brand) {
+      this.loadModels(type, brand);
+      // Clear model when brand changes
+      this.deviceForm.controls.model.setValue('');
+    }
+  }
+
+  onModelSelected(model: string): void {
+    const type = this.typeForm.controls.type.value;
+    const brand = this.deviceForm.controls.brand.value;
+    if (type && brand && model) {
+      // Record selection to improve ranking
+      this.deviceAutocompleteService.recordSelection(type, brand, model).subscribe();
+    }
   }
 
   onFilesSelected(event: Event): void {
@@ -1424,7 +1565,7 @@ export class EvaluationComponent {
       type: this.typeForm.controls.type.value!,
       brand: this.deviceForm.controls.brand.value!,
       model: this.deviceForm.controls.model.value!,
-      description: this.deviceForm.controls.description.value || undefined,
+      description: this.conditionForm.controls.description.value || undefined,
       condition: this.conditionForm.controls.condition.value as DeviceCondition
     };
 

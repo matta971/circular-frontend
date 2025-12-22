@@ -291,12 +291,19 @@ import { debounceTime, distinctUntilChanged, switchMap, startWith } from 'rxjs/o
                 <mat-card class="result-card value-card">
                   <mat-icon class="result-icon">paid</mat-icon>
                   <h2>Valeur estimée</h2>
-                  <div class="price-range">
-                    <span class="price">{{ estimationResult()!.minPrice | currency:'EUR' }}</span>
-                    <span class="separator">-</span>
-                    <span class="price">{{ estimationResult()!.maxPrice | currency:'EUR' }}</span>
-                  </div>
-                  <p class="confidence">Confiance: {{ estimationResult()!.confidence }}%</p>
+                  @if (calculatingPrice()) {
+                    <div class="price-loading">
+                      <mat-spinner diameter="24"></mat-spinner>
+                      <span>En cours de calcul...</span>
+                    </div>
+                  } @else if (estimationResult()) {
+                    <div class="price-range">
+                      <span class="price">{{ estimationResult()!.minPrice | currency:'EUR' }}</span>
+                      <span class="separator">-</span>
+                      <span class="price">{{ estimationResult()!.maxPrice | currency:'EUR' }}</span>
+                    </div>
+                    <p class="confidence">Confiance: {{ estimationResult()!.confidence }}%</p>
+                  }
                 </mat-card>
 
                 <!-- Carte Réparabilité -->
@@ -879,6 +886,20 @@ import { debounceTime, distinctUntilChanged, switchMap, startWith } from 'rxjs/o
         }
       }
 
+      .price-loading {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 1rem;
+        margin: 1.5rem 0;
+        color: rgba(0, 0, 0, 0.6);
+
+        span {
+          font-size: 1.1rem;
+          font-style: italic;
+        }
+      }
+
       .confidence {
         color: rgba(0, 0, 0, 0.6);
         margin-bottom: 1.5rem;
@@ -1359,6 +1380,7 @@ export class EvaluationComponent implements OnInit {
 
   loading = signal(false);
   analyzingPhotos = signal(false);
+  calculatingPrice = signal(false);
   selectedPhotos = signal<{ file: File; preview: string; name: string }[]>([]);
   estimationResult = signal<{ minPrice: number; maxPrice: number; confidence: number } | null>(null);
   repairabilityResult = signal<RepairabilityAssessment | null>(null);
@@ -1588,11 +1610,12 @@ export class EvaluationComponent implements OnInit {
         this.repairabilityResult.set(repairability);
         this.materialValueResult.set(materialValue);
 
-        // Calculer l'estimation locale
+        // Initialiser avec des valeurs placeholder et activer le chargement
+        this.calculatingPrice.set(true);
         this.estimationResult.set({
-          minPrice: draftResult.estimatedValueMin || 0,
-          maxPrice: draftResult.estimatedValueMax || 0,
-          confidence: 85
+          minPrice: 0,
+          maxPrice: 0,
+          confidence: 0
         });
 
         // Generer un ID temporaire
@@ -1645,6 +1668,15 @@ export class EvaluationComponent implements OnInit {
                   maxPrice: evaluation.result.marketReferenceEur || draftResult.estimatedValueMax || 0,
                   confidence
                 });
+                this.calculatingPrice.set(false);
+              } else {
+                // Pas de résultat, utiliser les valeurs du draft
+                this.estimationResult.set({
+                  minPrice: draftResult.estimatedValueMin || 0,
+                  maxPrice: draftResult.estimatedValueMax || 0,
+                  confidence: 85
+                });
+                this.calculatingPrice.set(false);
               }
 
               // Mettre a jour le stockage avec l'ID reel
@@ -1664,8 +1696,23 @@ export class EvaluationComponent implements OnInit {
             },
             error: (err) => {
               console.warn('Impossible de creer l\'evaluation backend, utilisation ID local:', err);
+              // Fallback: utiliser les valeurs du draft
+              this.estimationResult.set({
+                minPrice: draftResult.estimatedValueMin || 0,
+                maxPrice: draftResult.estimatedValueMax || 0,
+                confidence: 85
+              });
+              this.calculatingPrice.set(false);
             }
           });
+        } else {
+          // Pas de deviceId, utiliser les valeurs du draft
+          this.estimationResult.set({
+            minPrice: draftResult.estimatedValueMin || 0,
+            maxPrice: draftResult.estimatedValueMax || 0,
+            confidence: 85
+          });
+          this.calculatingPrice.set(false);
         }
 
         this.loading.set(false);
@@ -1687,6 +1734,7 @@ export class EvaluationComponent implements OnInit {
           maxPrice: Math.round(estimatedPrice * 1.2),
           confidence: Math.round(70 + Math.random() * 25)
         });
+        this.calculatingPrice.set(false);
 
         // Generer des donnees de reparabilite mock
         this.deviceService.getRepairabilityAssessment(repairabilityRequest).subscribe({

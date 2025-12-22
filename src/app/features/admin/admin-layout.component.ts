@@ -44,6 +44,21 @@ import { MatToolbarModule } from '@angular/material/toolbar';
             <mat-icon matListItemIcon>people</mat-icon>
             <span matListItemTitle>Utilisateurs</span>
           </a>
+
+          <div class="nav-divider"></div>
+
+          <a mat-list-item routerLink="repair-partners" routerLinkActive="active">
+            <mat-icon matListItemIcon>build</mat-icon>
+            <span matListItemTitle>Partenaires Répar.</span>
+          </a>
+          <a mat-list-item routerLink="scoring" routerLinkActive="active">
+            <mat-icon matListItemIcon>tune</mat-icon>
+            <span matListItemTitle>Scoring & Règles</span>
+          </a>
+          <a mat-list-item routerLink="kpis" routerLinkActive="active">
+            <mat-icon matListItemIcon>insights</mat-icon>
+            <span matListItemTitle>KPIs & Analytics</span>
+          </a>
         </mat-nav-list>
 
         <div class="sidenav-footer">
@@ -81,6 +96,12 @@ import { MatToolbarModule } from '@angular/material/toolbar';
         mat-icon {
           color: #4caf50;
         }
+      }
+
+      .nav-divider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+        margin: 1rem 1rem;
       }
 
       mat-nav-list {

@@ -139,18 +139,27 @@ export class DeviceService {
     );
   }
 
-  // Repairability assessment - uses market-price-service for iFixit scores
+  // Repairability assessment - uses ia-valuation-service with description analysis
   getRepairabilityAssessment(request: RepairabilityRequest): Observable<RepairabilityAssessment> {
-    const params: Record<string, string> = {};
-    if (request.brand) params['brand'] = request.brand;
-    if (request.model) params['model'] = request.model;
-    if (request.type) params['deviceType'] = request.type;
+    // Send POST request with full body including description for AI analysis
+    const body = {
+      type: request.type || 'SMARTPHONE',
+      brand: request.brand || '',
+      model: request.model || '',
+      condition: request.condition || 'FAIR',
+      description: request.description || ''
+    };
 
-    return this.http.get<{ score: number; normalizedScore: number; brand: string; model: string }>(
-      `${environment.apiUrl}/repairability/score`, { params }
+    console.log('[DeviceService] Calling repairability API with:', body);
+    return this.http.post<{ success: boolean; data: RepairabilityAssessment }>(
+      `${this.aiUrl}/repairability`, body
     ).pipe(
-      map(response => this.mapScoreToAssessment(response.score, request.brand, request.model)),
-      catchError(() => {
+      map(response => {
+        console.log('[DeviceService] API response:', response);
+        return response.data;
+      }),
+      catchError((error) => {
+        console.error('[DeviceService] API error, using mock:', error);
         // Mock repairability assessment
         return of({
           repairabilityIndex: 6.5,

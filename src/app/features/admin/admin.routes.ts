@@ -25,6 +25,18 @@ export const ADMIN_ROUTES: Routes = [
       {
         path: 'users',
         loadComponent: () => import('./users/admin-users.component').then(m => m.AdminUsersComponent)
+      },
+      {
+        path: 'repair-partners',
+        loadChildren: () => import('./repair-partners/repair-partners.routes').then(m => m.REPAIR_PARTNERS_ROUTES)
+      },
+      {
+        path: 'scoring',
+        loadChildren: () => import('./scoring/scoring.routes').then(m => m.SCORING_ROUTES)
+      },
+      {
+        path: 'kpis',
+        loadChildren: () => import('./kpi-dashboard/kpi-dashboard.routes').then(m => m.KPI_DASHBOARD_ROUTES)
       }
     ]
   }

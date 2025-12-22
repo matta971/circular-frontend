@@ -451,11 +451,16 @@ import { debounceTime, distinctUntilChanged, switchMap, startWith } from 'rxjs/o
                   <mat-icon>place</mat-icon>
                   Trouver un point de dépôt
                 </button>
+                <button mat-raised-button color="accent" routerLink="/marketplace/create"
+                  [queryParams]="{evaluationId: currentEvaluationId(), brand: deviceForm.controls.brand.value, model: deviceForm.controls.model.value}">
+                  <mat-icon>storefront</mat-icon>
+                  Vendre sur marketplace
+                </button>
                 @if (repairabilityResult()?.repairPartners?.length) {
-                  <button mat-raised-button color="accent"
+                  <button mat-raised-button
                     [routerLink]="currentEvaluationId() ? ['/repairability', currentEvaluationId()] : ['/repairability']">
                     <mat-icon>build</mat-icon>
-                    Trouver un reparateur
+                    Trouver un réparateur
                   </button>
                 }
               </div>

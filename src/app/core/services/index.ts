@@ -7,3 +7,4 @@ export * from './marketplace.service';
 export * from './certificate.service';
 export * from './notification.service';
 export * from './evaluation.service';
+export * from './token.service';

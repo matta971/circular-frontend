@@ -43,6 +43,16 @@ export const routes: Routes = [
     loadChildren: () => import('./features/wallet/wallet.routes').then(m => m.WALLET_ROUTES)
   },
   {
+    path: 'tokens',
+    canActivate: [authGuard],
+    loadChildren: () => import('./features/tokens/tokens.routes').then(m => m.TOKENS_ROUTES)
+  },
+  {
+    path: 'profile',
+    canActivate: [authGuard],
+    loadChildren: () => import('./features/profile/profile.routes').then(m => m.PROFILE_ROUTES)
+  },
+  {
     path: 'marketplace',
     loadChildren: () => import('./features/marketplace/marketplace.routes').then(m => m.MARKETPLACE_ROUTES)
   },

@@ -59,6 +59,18 @@ import { MatToolbarModule } from '@angular/material/toolbar';
             <mat-icon matListItemIcon>insights</mat-icon>
             <span matListItemTitle>KPIs & Analytics</span>
           </a>
+
+          <div class="nav-divider"></div>
+          <div class="nav-section-title">Portail Partenaires</div>
+
+          <a mat-list-item routerLink="partner-analytics" routerLinkActive="active">
+            <mat-icon matListItemIcon>business</mat-icon>
+            <span matListItemTitle>Analytics Partenaires</span>
+          </a>
+          <a mat-list-item routerLink="partner-subscriptions" routerLinkActive="active">
+            <mat-icon matListItemIcon>subscriptions</mat-icon>
+            <span matListItemTitle>Abonnements API</span>
+          </a>
         </mat-nav-list>
 
         <div class="sidenav-footer">
@@ -102,6 +114,15 @@ import { MatToolbarModule } from '@angular/material/toolbar';
         height: 1px;
         background: rgba(255, 255, 255, 0.1);
         margin: 1rem 1rem;
+      }
+
+      .nav-section-title {
+        color: rgba(255, 255, 255, 0.5);
+        font-size: 0.75rem;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        padding: 0 1rem;
+        margin-bottom: 0.5rem;
       }
 
       mat-nav-list {

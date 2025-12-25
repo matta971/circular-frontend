@@ -7,8 +7,20 @@ export interface User {
   role: UserRole;
   walletBalance?: number;
   emailVerified?: boolean;
+  country?: string;
+  preferredLanguage?: string;
+  avatarUrl?: string;
   addresses?: Address[];
   createdAt?: string;
+}
+
+export interface ProfileUpdateRequest {
+  firstName?: string;
+  lastName?: string;
+  phone?: string;
+  country?: string;
+  preferredLanguage?: string;
+  avatarUrl?: string;
 }
 
 export enum UserRole {

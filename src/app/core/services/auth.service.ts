@@ -3,7 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { ApiResponse, AuthResponse, LoginRequest, RegisterRequest, User, UserRole } from '../models';
+import { ApiResponse, AuthResponse, LoginRequest, RegisterRequest, User, UserRole, ProfileUpdateRequest } from '../models';
 
 @Injectable({
   providedIn: 'root'
@@ -66,6 +66,34 @@ export class AuthService {
         if (response.success) {
           this.storeTokens(response.data);
           this.currentUserSignal.set(response.data.user);
+        }
+      })
+    );
+  }
+
+  /**
+   * Met à jour le profil de l'utilisateur connecté.
+   */
+  updateProfile(request: ProfileUpdateRequest): Observable<ApiResponse<User>> {
+    return this.http.put<ApiResponse<User>>(`${environment.apiUrl}/users/me/profile`, request).pipe(
+      tap(response => {
+        if (response.success) {
+          this.currentUserSignal.set(response.data);
+          localStorage.setItem(this.USER_KEY, JSON.stringify(response.data));
+        }
+      })
+    );
+  }
+
+  /**
+   * Récupère le profil utilisateur depuis le serveur.
+   */
+  fetchCurrentUser(): Observable<ApiResponse<User>> {
+    return this.http.get<ApiResponse<User>>(`${environment.apiUrl}/users/me`).pipe(
+      tap(response => {
+        if (response.success) {
+          this.currentUserSignal.set(response.data);
+          localStorage.setItem(this.USER_KEY, JSON.stringify(response.data));
         }
       })
     );

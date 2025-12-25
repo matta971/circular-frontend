@@ -37,6 +37,14 @@ export const ADMIN_ROUTES: Routes = [
       {
         path: 'kpis',
         loadChildren: () => import('./kpi-dashboard/kpi-dashboard.routes').then(m => m.KPI_DASHBOARD_ROUTES)
+      },
+      {
+        path: 'partner-analytics',
+        loadChildren: () => import('./partner-analytics/partner-analytics.routes').then(m => m.PARTNER_ANALYTICS_ROUTES)
+      },
+      {
+        path: 'partner-subscriptions',
+        loadChildren: () => import('./partner-subscriptions/partner-subscriptions.routes').then(m => m.PARTNER_SUBSCRIPTIONS_ROUTES)
       }
     ]
   }

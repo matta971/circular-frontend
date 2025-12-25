@@ -52,6 +52,11 @@ import { NotificationService } from '../../../core/services/notification.service
       <span class="spacer"></span>
 
       @if (authService.isAuthenticated()) {
+        <a mat-button routerLink="/tokens" class="tokens-btn">
+          <mat-icon>toll</mat-icon>
+          <span class="tokens-text">Mes Tokens</span>
+        </a>
+
         <a mat-button routerLink="/wallet" class="wallet-btn">
           <mat-icon>account_balance_wallet</mat-icon>
           <span class="wallet-text">Mon Wallet</span>
@@ -79,6 +84,10 @@ import { NotificationService } from '../../../core/services/notification.service
             </div>
           </div>
           <mat-divider></mat-divider>
+          <a mat-menu-item routerLink="/profile">
+            <mat-icon>settings</mat-icon>
+            Mon profil
+          </a>
           <a mat-menu-item routerLink="/evaluation/my-evaluations">
             <mat-icon>assessment</mat-icon>
             Mes évaluations
@@ -94,6 +103,10 @@ import { NotificationService } from '../../../core/services/notification.service
           <a mat-menu-item routerLink="/certificates">
             <mat-icon>workspace_premium</mat-icon>
             Mes certificats
+          </a>
+          <a mat-menu-item routerLink="/tokens">
+            <mat-icon>toll</mat-icon>
+            Mes Tokens & Vouchers
           </a>
           <mat-divider></mat-divider>
           @if (authService.isAdmin()) {
@@ -172,6 +185,27 @@ import { NotificationService } from '../../../core/services/notification.service
 
     .spacer {
       flex: 1;
+    }
+
+    .tokens-btn {
+      color: var(--ce-secondary, #f59e0b);
+      margin-right: 0.5rem;
+      font-size: 1.1rem;
+
+      mat-icon {
+        margin-right: 6px;
+        font-size: 24px;
+        height: 24px;
+        width: 24px;
+      }
+
+      .tokens-text {
+        font-weight: 500;
+      }
+
+      &:hover {
+        background: rgba(245, 158, 11, 0.1);
+      }
     }
 
     .wallet-btn {
@@ -276,6 +310,7 @@ import { NotificationService } from '../../../core/services/notification.service
         display: none;
       }
 
+      .tokens-text,
       .wallet-text {
         display: none;
       }

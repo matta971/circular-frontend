@@ -36,7 +36,7 @@ export type LandingPageType = 'citoyen' | 'association' | 'entreprise' | null;
 
       <div class="vous-etes">
         <button mat-button [matMenuTriggerFor]="vousEtesMenu" class="vous-etes-btn">
-          <span>Vous etes ?</span>
+          <span>Vous êtes ?</span>
           <mat-icon>expand_more</mat-icon>
         </button>
         <mat-menu #vousEtesMenu="matMenu" class="vous-etes-menu">
@@ -118,23 +118,34 @@ export type LandingPageType = 'citoyen' | 'association' | 'entreprise' | null;
     }
 
     .vous-etes-btn {
-      background: var(--ce-primary, #1a1fd8);
-      color: white;
+      background: var(--ce-primary, #1a1fd8) !important;
+      color: white !important;
       border-radius: 24px;
       padding: 0.5rem 1.25rem;
       font-weight: 500;
-      transition: all 0.2s ease;
+      transition: background 0.2s ease, transform 0.2s ease;
+      line-height: normal;
 
       mat-icon {
         margin-left: 4px;
         font-size: 20px;
         width: 20px;
         height: 20px;
+        color: white !important;
+      }
+
+      span {
+        color: white !important;
       }
 
       &:hover {
-        background: var(--ce-primary-dark, #1519a8);
+        background: var(--ce-primary-dark, #1519a8) !important;
         transform: translateY(-1px);
+      }
+
+      &:focus, &:active, &[aria-expanded="true"] {
+        background: var(--ce-primary, #1a1fd8) !important;
+        color: white !important;
       }
     }
 

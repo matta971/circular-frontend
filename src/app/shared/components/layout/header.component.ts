@@ -136,13 +136,16 @@ import { NotificationService } from '../../../core/services/notification.service
   `,
   styles: [`
     .header-toolbar {
-      position: sticky;
+      position: fixed;
       top: 0;
+      left: 0;
+      right: 0;
       z-index: 1000;
       background: white;
       border-bottom: 1px solid var(--ce-gray-200);
       padding: 0 1.5rem;
       height: 100px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
     }
 
     .logo {

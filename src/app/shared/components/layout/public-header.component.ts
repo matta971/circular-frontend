@@ -66,8 +66,10 @@ export type LandingPageType = 'citoyen' | 'association' | 'entreprise' | null;
   `,
   styles: [`
     .public-header {
-      position: sticky;
+      position: fixed;
       top: 0;
+      left: 0;
+      right: 0;
       z-index: 1000;
       background: var(--ce-white, #ffffff);
       border-bottom: 1px solid var(--ce-gray-200, #eeeeee);

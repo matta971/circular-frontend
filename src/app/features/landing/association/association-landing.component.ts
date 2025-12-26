@@ -161,12 +161,12 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
     /* Hero Section */
     .hero {
       background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #7dd3fc 100%);
-      padding: 4rem 2rem;
+      padding: calc(80px + 2rem) 2rem 4rem 2rem; // 80px for fixed header + content padding
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 4rem;
-      min-height: 450px;
+      min-height: calc(450px + 80px);
     }
 
     .hero-content {

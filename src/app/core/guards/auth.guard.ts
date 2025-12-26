@@ -49,3 +49,15 @@ export const driverGuard: CanActivateFn = () => {
   router.navigate(['/']);
   return false;
 };
+
+export const homeGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  if (authService.isAuthenticated()) {
+    return true;
+  }
+
+  router.navigate(['/citoyen']);
+  return false;
+};

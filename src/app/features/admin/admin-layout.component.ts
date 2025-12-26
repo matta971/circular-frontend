@@ -44,6 +44,10 @@ import { MatToolbarModule } from '@angular/material/toolbar';
             <mat-icon matListItemIcon>people</mat-icon>
             <span matListItemTitle>Utilisateurs</span>
           </a>
+          <a mat-list-item routerLink="onboarding" routerLinkActive="active">
+            <mat-icon matListItemIcon>waving_hand</mat-icon>
+            <span matListItemTitle>Onboarding</span>
+          </a>
 
           <div class="nav-divider"></div>
 

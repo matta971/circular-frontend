@@ -69,6 +69,22 @@ export const routes: Routes = [
     canActivate: [adminGuard],
     loadChildren: () => import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES)
   },
+  // Landing pages (public)
+  {
+    path: 'citoyen',
+    loadComponent: () => import('./features/landing/citoyen/citoyen-landing.component').then(m => m.CitoyenLandingComponent),
+    title: 'Citoyen - Circular Electronics'
+  },
+  {
+    path: 'association',
+    loadComponent: () => import('./features/landing/association/association-landing.component').then(m => m.AssociationLandingComponent),
+    title: 'Association - Circular Electronics'
+  },
+  {
+    path: 'entreprise',
+    loadComponent: () => import('./features/landing/entreprise/entreprise-landing.component').then(m => m.EntrepriseLandingComponent),
+    title: 'Entreprise - Circular Electronics'
+  },
   {
     path: '**',
     redirectTo: ''

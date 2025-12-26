@@ -5,6 +5,11 @@ import { Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { ApiResponse, AuthResponse, LoginRequest, RegisterRequest, User, UserRole, ProfileUpdateRequest } from '../models';
 
+export interface OAuthRequest {
+  provider: 'GOOGLE' | 'FACEBOOK';
+  token: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -40,6 +45,20 @@ export class AuthService {
 
   register(data: RegisterRequest): Observable<ApiResponse<AuthResponse>> {
     return this.http.post<ApiResponse<AuthResponse>>(`${this.apiUrl}/register`, data).pipe(
+      tap(response => {
+        if (response.success) {
+          this.storeTokens(response.data);
+          this.currentUserSignal.set(response.data.user);
+        }
+      })
+    );
+  }
+
+  /**
+   * OAuth login via Google or Facebook
+   */
+  oauthLogin(request: OAuthRequest): Observable<ApiResponse<AuthResponse>> {
+    return this.http.post<ApiResponse<AuthResponse>>(`${this.apiUrl}/oauth`, request).pipe(
       tap(response => {
         if (response.success) {
           this.storeTokens(response.data);

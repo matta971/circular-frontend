@@ -45,6 +45,10 @@ export const ADMIN_ROUTES: Routes = [
       {
         path: 'partner-subscriptions',
         loadChildren: () => import('./partner-subscriptions/partner-subscriptions.routes').then(m => m.PARTNER_SUBSCRIPTIONS_ROUTES)
+      },
+      {
+        path: 'onboarding',
+        loadChildren: () => import('./onboarding/onboarding.routes').then(m => m.ONBOARDING_ROUTES)
       }
     ]
   }

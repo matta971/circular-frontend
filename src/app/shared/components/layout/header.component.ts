@@ -70,13 +70,21 @@ import { NotificationService } from '../../../core/services/notification.service
         </button>
 
         <button mat-icon-button [matMenuTriggerFor]="userMenu" class="user-btn">
-          <mat-icon>account_circle</mat-icon>
+          @if (authService.currentUser()?.avatarUrl) {
+            <img [src]="authService.currentUser()?.avatarUrl" alt="Avatar" class="header-avatar" referrerpolicy="no-referrer">
+          } @else {
+            <mat-icon>account_circle</mat-icon>
+          }
         </button>
 
         <mat-menu #userMenu="matMenu" class="user-menu">
           <div class="user-info">
             <div class="user-avatar">
-              <mat-icon>person</mat-icon>
+              @if (authService.currentUser()?.avatarUrl) {
+                <img [src]="authService.currentUser()?.avatarUrl" alt="Avatar" referrerpolicy="no-referrer">
+              } @else {
+                <mat-icon>person</mat-icon>
+              }
             </div>
             <div class="user-details">
               <p class="user-name">{{ authService.currentUser()?.firstName }} {{ authService.currentUser()?.lastName }}</p>
@@ -248,6 +256,13 @@ import { NotificationService } from '../../../core/services/notification.service
         width: 28px;
       }
 
+      .header-avatar {
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+
       &:hover {
         color: var(--ce-primary);
       }
@@ -280,9 +295,16 @@ import { NotificationService } from '../../../core/services/notification.service
         display: flex;
         align-items: center;
         justify-content: center;
+        overflow: hidden;
 
         mat-icon {
           color: white;
+        }
+
+        img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
         }
       }
 

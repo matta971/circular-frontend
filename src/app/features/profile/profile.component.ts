@@ -48,7 +48,7 @@ interface Language {
           <div class="avatar-section">
             <div class="avatar">
               @if (authService.currentUser()?.avatarUrl) {
-                <img [src]="authService.currentUser()?.avatarUrl" alt="Avatar">
+                <img [src]="authService.currentUser()?.avatarUrl" alt="Avatar" referrerpolicy="no-referrer">
               } @else {
                 <mat-icon>person</mat-icon>
               }

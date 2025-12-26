@@ -7,4 +7,8 @@
 main {
   flex: 1;
   padding-top: 100px; // Account for fixed header height
+
+  &.landing-page {
+    padding-top: 0; // Landing pages handle their own header spacing
+  }
 }

@@ -1,7 +1,7 @@
 @if (!isLandingPage()) {
   <app-header></app-header>
 }
-<main>
+<main [class.landing-page]="isLandingPage()">
   <router-outlet />
 </main>
 @if (!isLandingPage()) {

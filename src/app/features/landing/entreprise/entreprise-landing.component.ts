@@ -196,12 +196,12 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
     .hero {
       position: relative;
       background: linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 50%, #3b82f6 100%);
-      padding: calc(80px + 2rem) 2rem 4rem 2rem; // 80px for fixed header + content padding
+      padding: 80px 2rem 4rem 2rem; // 80px for fixed header
       display: flex;
       align-items: center;
       justify-content: center;
       gap: 4rem;
-      min-height: calc(450px + 80px);
+      min-height: 450px;
       overflow: hidden;
     }
 

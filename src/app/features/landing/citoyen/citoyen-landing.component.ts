@@ -26,10 +26,10 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
       <!-- Hero Section -->
       <section class="hero" id="concept">
         <div class="hero-content">
-          <h1>Donnez une seconde vie a vos appareils et soyez recompense.</h1>
+          <h1>Donnez une seconde vie à vos appareils et soyez récompensé.</h1>
           <p class="hero-subtitle">
-            Evaluez, reparez, revendez ou recyclez vos equipements electroniques.
-            Gagnez des tokens a chaque geste eco-responsable, en toute transparence.
+            Evaluez, réparez, revendez ou recyclez vos équipements électroniques.
+            Gagnez des tokens à chaque geste eco-responsable, en toute transparence.
           </p>
           <div class="hero-cta">
             <a mat-raised-button color="primary" routerLink="/auth/register" class="cta-primary">

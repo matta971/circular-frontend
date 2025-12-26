@@ -27,7 +27,7 @@ export type LandingPageType = 'citoyen' | 'association' | 'entreprise' | null;
 
       <nav class="nav-links">
         <a mat-button (click)="scrollTo('concept')">Concept</a>
-        <a mat-button (click)="scrollTo('how-it-works')">Comment ca marche</a>
+        <a mat-button (click)="scrollTo('how-it-works')">Comment ça marche</a>
         <a mat-button (click)="scrollTo('impact')">Impact</a>
         <a mat-button (click)="scrollTo('partners')">Partenaires</a>
       </nav>

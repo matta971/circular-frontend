@@ -16,7 +16,7 @@ import { MatIconModule } from '@angular/material/icon';
         <div class="hero-content">
           <h1>Donnez une seconde vie à vos appareils et soyez récompensé.</h1>
           <p class="hero-subtitle">
-            Evaluez, réparez, revendez ou recyclez vos équipements électroniques.
+            Évaluez, réparez, revendez ou recyclez vos équipements électroniques.
             Gagnez des tokens à chaque geste éco-responsable, en toute transparence.
           </p>
           <div class="hero-cta">
@@ -40,13 +40,13 @@ import { MatIconModule } from '@angular/material/icon';
             <mat-card class="service-card" routerLink="/evaluation">
               <mat-icon class="service-icon evaluate">devices</mat-icon>
               <mat-card-header>
-                <mat-card-title>Evaluer mes appareils</mat-card-title>
+                <mat-card-title>Évaluer mes appareils</mat-card-title>
               </mat-card-header>
               <mat-card-content>
                 <p>Obtenez une estimation de la valeur de vos appareils électroniques en quelques clics</p>
               </mat-card-content>
               <mat-card-actions>
-                <button mat-raised-button color="primary">Commencer l'evaluation</button>
+                <button mat-raised-button color="primary">Commencer l'évaluation</button>
               </mat-card-actions>
             </mat-card>
 
@@ -56,7 +56,7 @@ import { MatIconModule } from '@angular/material/icon';
                 <mat-card-title>Demander une collecte</mat-card-title>
               </mat-card-header>
               <mat-card-content>
-                <p>Planifiez le passage d'un chauffeur pour recuperer vos appareils a domicile</p>
+                <p>Planifiez le passage d'un chauffeur pour récupérer vos appareils à domicile</p>
               </mat-card-content>
               <mat-card-actions>
                 <button mat-raised-button color="accent">Planifier une collecte</button>
@@ -66,10 +66,10 @@ import { MatIconModule } from '@angular/material/icon';
             <mat-card class="service-card" routerLink="/deposit">
               <mat-icon class="service-icon deposit">place</mat-icon>
               <mat-card-header>
-                <mat-card-title>Deposer en point de collecte</mat-card-title>
+                <mat-card-title>Déposer en point de collecte</mat-card-title>
               </mat-card-header>
               <mat-card-content>
-                <p>Trouvez un point de depot proche de chez vous et generez votre QR code</p>
+                <p>Trouvez un point de dépôt proche de chez vous et générez votre QR code</p>
               </mat-card-content>
               <mat-card-actions>
                 <button mat-raised-button color="warn">Trouver un point</button>
@@ -89,7 +89,7 @@ import { MatIconModule } from '@angular/material/icon';
           <ul class="problem-list">
             <li>
               <mat-icon>help_outline</mat-icon>
-              <span>Ou déposer leurs appareils</span>
+              <span>Où déposer leurs appareils</span>
             </li>
             <li>
               <mat-icon>visibility_off</mat-icon>
@@ -97,7 +97,7 @@ import { MatIconModule } from '@angular/material/icon';
             </li>
             <li>
               <mat-icon>trending_down</mat-icon>
-              <span>Si leur geste a un veritable impact</span>
+              <span>Si leur geste a un véritable impact</span>
             </li>
           </ul>
           <p class="section-conclusion">
@@ -115,15 +115,15 @@ import { MatIconModule } from '@angular/material/icon';
               <div class="pillar-icon">
                 <mat-icon>search</mat-icon>
               </div>
-              <h3>Tracabilite</h3>
-              <p>Chaque appareil est suivi. Vous savez s'il est réparé, réemploye ou recyclé.</p>
+              <h3>Traçabilité</h3>
+              <p>Chaque appareil est suivi. Vous savez s'il est réparé, réemployé ou recyclé.</p>
             </div>
             <div class="pillar">
               <div class="pillar-icon">
                 <mat-icon>sync</mat-icon>
               </div>
               <h3>Coordination</h3>
-              <p>Associations, reparateurs et recycleurs travaillent ensemble dans un meme cadre.</p>
+              <p>Associations, réparateurs et recycleurs travaillent ensemble dans un même cadre.</p>
             </div>
             <div class="pillar">
               <div class="pillar-icon">
@@ -141,14 +141,14 @@ import { MatIconModule } from '@angular/material/icon';
         <div class="container">
           <h2>Tout ce que vous pouvez faire avec Circular</h2>
           <p class="section-text">
-            Des outils simples pour valoriser vos appareils et agir pour la planete
+            Des outils simples pour valoriser vos appareils et agir pour la planète
           </p>
           <div class="benefits-grid">
             <div class="benefit-card">
               <div class="benefit-icon">
                 <mat-icon>calculate</mat-icon>
               </div>
-              <h3>Evaluez la valeur</h3>
+              <h3>Évaluez la valeur</h3>
               <p>Obtenez instantanément une estimation de la valeur de votre appareil grâce à notre IA. Simple, rapide et transparent.</p>
               <ul class="benefit-features">
                 <li><mat-icon>check_circle</mat-icon> Estimation en quelques secondes</li>
@@ -161,11 +161,11 @@ import { MatIconModule } from '@angular/material/icon';
                 <mat-icon>build</mat-icon>
               </div>
               <h3>Réparez facilement</h3>
-              <p>Découvrez si votre appareil est réparable, ou le faire réparer et à quel coût estimé.</p>
+              <p>Découvrez si votre appareil est réparable, où le faire réparer et à quel coût estimé.</p>
               <ul class="benefit-features">
-                <li><mat-icon>check_circle</mat-icon> Score de reparabilite</li>
-                <li><mat-icon>check_circle</mat-icon> Reparateurs certifies pres de chez vous</li>
-                <li><mat-icon>check_circle</mat-icon> Estimation du cout de reparation</li>
+                <li><mat-icon>check_circle</mat-icon> Score de réparabilité</li>
+                <li><mat-icon>check_circle</mat-icon> Réparateurs certifiés près de chez vous</li>
+                <li><mat-icon>check_circle</mat-icon> Estimation du coût de réparation</li>
               </ul>
             </div>
             <div class="benefit-card">
@@ -176,20 +176,20 @@ import { MatIconModule } from '@angular/material/icon';
               <p>Mettez en vente vos appareils sur notre marketplace ou trouvez un acheteur solidaire.</p>
               <ul class="benefit-features">
                 <li><mat-icon>check_circle</mat-icon> Annonces en quelques clics</li>
-                <li><mat-icon>check_circle</mat-icon> Certificat de tracabilite inclus</li>
-                <li><mat-icon>check_circle</mat-icon> Paiement securise</li>
+                <li><mat-icon>check_circle</mat-icon> Certificat de traçabilité inclus</li>
+                <li><mat-icon>check_circle</mat-icon> Paiement sécurisé</li>
               </ul>
             </div>
             <div class="benefit-card highlight">
               <div class="benefit-icon">
                 <mat-icon>card_giftcard</mat-icon>
               </div>
-              <h3>Gagnez des recompenses</h3>
-              <p>Chaque geste eco-responsable vous rapporte des tokens echangeables contre des avantages.</p>
+              <h3>Gagnez des récompenses</h3>
+              <p>Chaque geste éco-responsable vous rapporte des tokens échangeables contre des avantages.</p>
               <ul class="benefit-features">
-                <li><mat-icon>check_circle</mat-icon> Tokens pour chaque appareil depose</li>
-                <li><mat-icon>check_circle</mat-icon> Bonus si reparation ou reemploi</li>
-                <li><mat-icon>check_circle</mat-icon> Echangez contre des bons d'achat</li>
+                <li><mat-icon>check_circle</mat-icon> Tokens pour chaque appareil déposé</li>
+                <li><mat-icon>check_circle</mat-icon> Bonus si réparation ou réemploi</li>
+                <li><mat-icon>check_circle</mat-icon> Échangez contre des bons d'achat</li>
               </ul>
             </div>
           </div>
@@ -199,15 +199,15 @@ import { MatIconModule } from '@angular/material/icon';
       <!-- How it Works Section -->
       <section class="section section-steps">
         <div class="container">
-          <h2>Comment ca marche</h2>
+          <h2>Comment ça marche</h2>
           <div class="steps">
             <div class="step">
               <div class="step-number">1</div>
               <div class="step-icon">
                 <mat-icon>smartphone</mat-icon>
               </div>
-              <h3>Scannez ou decrivez</h3>
-              <p>Photographiez ou decrivez votre appareil</p>
+              <h3>Scannez ou décrivez</h3>
+              <p>Photographiez ou décrivez votre appareil</p>
             </div>
             <div class="step-arrow">
               <mat-icon>arrow_forward</mat-icon>
@@ -217,8 +217,8 @@ import { MatIconModule } from '@angular/material/icon';
               <div class="step-icon">
                 <mat-icon>analytics</mat-icon>
               </div>
-              <h3>Evaluation instantanee</h3>
-              <p>Valeur, reparabilite, options de valorisation</p>
+              <h3>Évaluation instantanée</h3>
+              <p>Valeur, réparabilité, options de valorisation</p>
             </div>
             <div class="step-arrow">
               <mat-icon>arrow_forward</mat-icon>
@@ -229,7 +229,7 @@ import { MatIconModule } from '@angular/material/icon';
                 <mat-icon>alt_route</mat-icon>
               </div>
               <h3>Choisissez votre option</h3>
-              <p>Reparer, revendre, recycler ou donner</p>
+              <p>Réparer, revendre, recycler ou donner</p>
             </div>
             <div class="step-arrow">
               <mat-icon>arrow_forward</mat-icon>
@@ -239,8 +239,8 @@ import { MatIconModule } from '@angular/material/icon';
               <div class="step-icon">
                 <mat-icon>emoji_events</mat-icon>
               </div>
-              <h3>Recevez vos recompenses</h3>
-              <p>Recevez vos recompenses, tokens et certificats d'impact dans votre wallet Circular</p>
+              <h3>Recevez vos récompenses</h3>
+              <p>Recevez vos récompenses, tokens et certificats d'impact dans votre wallet Circular</p>
             </div>
           </div>
         </div>
@@ -253,19 +253,19 @@ import { MatIconModule } from '@angular/material/icon';
           <div class="trust-items">
             <div class="trust-item">
               <mat-icon>verified</mat-icon>
-              <span>Acteurs partenaires certifies</span>
+              <span>Acteurs partenaires certifiés</span>
             </div>
             <div class="trust-item">
               <mat-icon>visibility</mat-icon>
-              <span>Demarche transparente</span>
+              <span>Démarche transparente</span>
             </div>
             <div class="trust-item">
               <mat-icon>favorite</mat-icon>
-              <span>Logique d'economie circulaire et solidaire</span>
+              <span>Logique d'économie circulaire et solidaire</span>
             </div>
             <div class="trust-item">
               <mat-icon>fact_check</mat-icon>
-              <span>Donnees claires, accessibles et verifiables</span>
+              <span>Données claires, accessibles et vérifiables</span>
             </div>
           </div>
         </div>
@@ -274,8 +274,8 @@ import { MatIconModule } from '@angular/material/icon';
       <!-- Final CTA -->
       <section class="section section-final-cta">
         <div class="container">
-          <h2>Pret a agir pour la planete ?</h2>
-          <p>Evaluez votre premier appareil et decouvrez sa valeur.</p>
+          <h2>Prêt à agir pour la planète ?</h2>
+          <p>Évaluez votre premier appareil et découvrez sa valeur.</p>
           <a mat-raised-button routerLink="/evaluation" class="cta-final">
             Commencer maintenant
           </a>

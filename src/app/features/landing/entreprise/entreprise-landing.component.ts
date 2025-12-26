@@ -29,16 +29,16 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
       <section class="hero" id="concept">
         <div class="hero-background"></div>
         <div class="hero-content">
-          <h1><span class="highlight">La conformite environnementale,</span> en toute confiance.</h1>
+          <h1><span class="highlight">La conformité environnementale,</span> en toute confiance.</h1>
           <p class="hero-subtitle">
-            Pilotez, tracez et valorisez la gestion de vos equipements electroniques.
+            Pilotez, tracez et valorisez la gestion de vos équipements électroniques.
           </p>
           <div class="hero-cta">
             <a mat-raised-button color="primary" routerLink="/auth/register" class="cta-primary">
-              Decouvrir la solution
+              Découvrir la solution
             </a>
             <a mat-stroked-button class="cta-secondary" routerLink="/contact">
-              Demander une demo
+              Demander une démo
             </a>
           </div>
         </div>
@@ -50,7 +50,7 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
             <div class="card-content">
               <div class="metric">
                 <span class="metric-value">98%</span>
-                <span class="metric-label">Tracabilite</span>
+                <span class="metric-label">Traçabilité</span>
               </div>
             </div>
           </div>
@@ -71,8 +71,8 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
           </div>
           <h2>Des obligations croissantes, des preuves indispensables.</h2>
           <p class="section-text">
-            REP, DEEE, RSE, audits : les entreprises doivent aujourd'hui demontrer
-            leurs engagements environnementaux de maniere claire et verifiable.
+            REP, DEEE, RSE, audits : les entreprises doivent aujourd'hui démontrer
+            leurs engagements environnementaux de manière claire et vérifiable.
           </p>
         </div>
       </section>
@@ -86,22 +86,22 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
               <div class="feature-icon feature-pilotage">
                 <mat-icon>dashboard</mat-icon>
               </div>
-              <h3>Pilotage Centralise</h3>
-              <p>Suivez vos flux d'equipements en temps reel.</p>
+              <h3>Pilotage Centralisé</h3>
+              <p>Suivez vos flux d'équipements en temps réel.</p>
             </div>
             <div class="feature">
               <div class="feature-icon feature-tracability">
                 <mat-icon>verified</mat-icon>
               </div>
-              <h3>Tracabilite Opposable</h3>
-              <p>Chaque lot est documente et horodate.</p>
+              <h3>Traçabilité Opposable</h3>
+              <p>Chaque lot est documenté et horodaté.</p>
             </div>
             <div class="feature">
               <div class="feature-icon feature-coordination">
                 <mat-icon>account_tree</mat-icon>
               </div>
               <h3>Coordination des Acteurs</h3>
-              <p>Tous les acteurs integres dans un cadre commun.</p>
+              <p>Tous les acteurs intégrés dans un cadre commun.</p>
             </div>
             <div class="feature">
               <div class="feature-icon feature-rse">
@@ -145,8 +145,8 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
                 <mat-icon>balance</mat-icon>
               </div>
               <div class="why-content">
-                <h3>Neutralite</h3>
-                <p>Une plateforme independante au service de tous les acteurs.</p>
+                <h3>Neutralité</h3>
+                <p>Une plateforme indépendante au service de tous les acteurs.</p>
               </div>
             </div>
             <div class="why-item">
@@ -155,7 +155,7 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
               </div>
               <div class="why-content">
                 <h3>Transparence</h3>
-                <p>Des donnees claires, accessibles et auditables.</p>
+                <p>Des données claires, accessibles et auditables.</p>
               </div>
             </div>
             <div class="why-item">
@@ -164,7 +164,7 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
               </div>
               <div class="why-content">
                 <h3>Vision long terme</h3>
-                <p>Une solution evolutive qui accompagne vos objectifs.</p>
+                <p>Une solution évolutive qui accompagne vos objectifs.</p>
               </div>
             </div>
           </div>
@@ -174,10 +174,10 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
       <!-- Final CTA -->
       <section class="section section-final-cta">
         <div class="container">
-          <h2>Echanger avec un expert Circular Electronics</h2>
-          <p>Decouvrez comment optimiser la gestion de vos equipements electroniques.</p>
+          <h2>Échanger avec un expert Circular Electronics</h2>
+          <p>Découvrez comment optimiser la gestion de vos équipements électroniques.</p>
           <a mat-raised-button color="primary" routerLink="/contact" class="cta-final">
-            Demander une demo
+            Demander une démo
           </a>
         </div>
       </section>

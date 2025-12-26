@@ -28,8 +28,8 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
         <div class="hero-content">
           <h1>Donnez une seconde vie à vos appareils et soyez récompensé.</h1>
           <p class="hero-subtitle">
-            Evaluez, réparez, revendez ou recyclez vos équipements électroniques.
-            Gagnez des tokens à chaque geste eco-responsable, en toute transparence.
+            Évaluez, réparez, revendez ou recyclez vos équipements électroniques.
+            Gagnez des tokens à chaque geste éco-responsable, en toute transparence.
           </p>
           <div class="hero-cta">
             <a mat-raised-button color="primary" routerLink="/auth/register" class="cta-primary">
@@ -50,26 +50,26 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
       <!-- Problem Section -->
       <section class="section section-problem" id="impact">
         <div class="container">
-          <h2>Recycler est devenu complique. Nous l'avons simplifie.</h2>
+          <h2>Recycler est devenu compliqué. Nous l'avons simplifié.</h2>
           <p class="section-text">
             Aujourd'hui, beaucoup de citoyens veulent bien faire, mais ne savent pas :
           </p>
           <ul class="problem-list">
             <li>
               <mat-icon>help_outline</mat-icon>
-              <span>Ou deposer leurs appareils</span>
+              <span>Où déposer leurs appareils</span>
             </li>
             <li>
               <mat-icon>visibility_off</mat-icon>
-              <span>Ce qu'ils deviennent reellement</span>
+              <span>Ce qu'ils deviennent réellement</span>
             </li>
             <li>
               <mat-icon>trending_down</mat-icon>
-              <span>Si leur geste a un veritable impact</span>
+              <span>Si leur geste a un véritable impact</span>
             </li>
           </ul>
           <p class="section-conclusion">
-            Resultat : des equipements stockes, jetes ou mal recycles.
+            Résultat : des équipements stockés, jetés ou mal recyclés.
           </p>
         </div>
       </section>
@@ -83,15 +83,15 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
               <div class="pillar-icon">
                 <mat-icon>search</mat-icon>
               </div>
-              <h3>Tracabilite</h3>
-              <p>Chaque appareil est suivi. Vous savez s'il est repare, reemploye ou recycle.</p>
+              <h3>Traçabilité</h3>
+              <p>Chaque appareil est suivi. Vous savez s'il est réparé, réemployé ou recyclé.</p>
             </div>
             <div class="pillar">
               <div class="pillar-icon">
                 <mat-icon>sync</mat-icon>
               </div>
               <h3>Coordination</h3>
-              <p>Associations, reparateurs et recycleurs travaillent ensemble dans un meme cadre.</p>
+              <p>Associations, réparateurs et recycleurs travaillent ensemble dans un même cadre.</p>
             </div>
             <div class="pillar">
               <div class="pillar-icon">
@@ -109,18 +109,18 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
         <div class="container">
           <h2>Tout ce que vous pouvez faire avec Circular</h2>
           <p class="section-text">
-            Des outils simples pour valoriser vos appareils et agir pour la planete
+            Des outils simples pour valoriser vos appareils et agir pour la planète
           </p>
           <div class="benefits-grid">
             <div class="benefit-card">
               <div class="benefit-icon">
                 <mat-icon>calculate</mat-icon>
               </div>
-              <h3>Evaluez la valeur</h3>
-              <p>Obtenez instantanement une estimation de la valeur de votre appareil grace a notre IA. Simple, rapide et transparent.</p>
+              <h3>Évaluez la valeur</h3>
+              <p>Obtenez instantanément une estimation de la valeur de votre appareil grâce à notre IA. Simple, rapide et transparent.</p>
               <ul class="benefit-features">
                 <li><mat-icon>check_circle</mat-icon> Estimation en quelques secondes</li>
-                <li><mat-icon>check_circle</mat-icon> Prix du marche actualise</li>
+                <li><mat-icon>check_circle</mat-icon> Prix du marché actualisé</li>
                 <li><mat-icon>check_circle</mat-icon> Comparaison avec les prix neufs</li>
               </ul>
             </div>
@@ -128,12 +128,12 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
               <div class="benefit-icon">
                 <mat-icon>build</mat-icon>
               </div>
-              <h3>Reparez facilement</h3>
-              <p>Decouvrez si votre appareil est reparable, ou le faire reparer et a quel cout estime.</p>
+              <h3>Réparez facilement</h3>
+              <p>Découvrez si votre appareil est réparable, où le faire réparer et à quel coût estimé.</p>
               <ul class="benefit-features">
-                <li><mat-icon>check_circle</mat-icon> Score de reparabilite</li>
-                <li><mat-icon>check_circle</mat-icon> Reparateurs certifies pres de chez vous</li>
-                <li><mat-icon>check_circle</mat-icon> Estimation du cout de reparation</li>
+                <li><mat-icon>check_circle</mat-icon> Score de réparabilité</li>
+                <li><mat-icon>check_circle</mat-icon> Réparateurs certifiés près de chez vous</li>
+                <li><mat-icon>check_circle</mat-icon> Estimation du coût de réparation</li>
               </ul>
             </div>
             <div class="benefit-card">
@@ -144,20 +144,20 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
               <p>Mettez en vente vos appareils sur notre marketplace ou trouvez un acheteur solidaire.</p>
               <ul class="benefit-features">
                 <li><mat-icon>check_circle</mat-icon> Annonces en quelques clics</li>
-                <li><mat-icon>check_circle</mat-icon> Certificat de tracabilite inclus</li>
-                <li><mat-icon>check_circle</mat-icon> Paiement securise</li>
+                <li><mat-icon>check_circle</mat-icon> Certificat de traçabilité inclus</li>
+                <li><mat-icon>check_circle</mat-icon> Paiement sécurisé</li>
               </ul>
             </div>
             <div class="benefit-card highlight">
               <div class="benefit-icon">
                 <mat-icon>card_giftcard</mat-icon>
               </div>
-              <h3>Gagnez des recompenses</h3>
-              <p>Chaque geste eco-responsable vous rapporte des tokens echangeables contre des avantages.</p>
+              <h3>Gagnez des récompenses</h3>
+              <p>Chaque geste éco-responsable vous rapporte des tokens échangeables contre des avantages.</p>
               <ul class="benefit-features">
-                <li><mat-icon>check_circle</mat-icon> Tokens pour chaque appareil depose</li>
-                <li><mat-icon>check_circle</mat-icon> Bonus si reparation ou reemploi</li>
-                <li><mat-icon>check_circle</mat-icon> Echangez contre des bons d'achat</li>
+                <li><mat-icon>check_circle</mat-icon> Tokens pour chaque appareil déposé</li>
+                <li><mat-icon>check_circle</mat-icon> Bonus si réparation ou réemploi</li>
+                <li><mat-icon>check_circle</mat-icon> Échangez contre des bons d'achat</li>
               </ul>
             </div>
           </div>
@@ -167,15 +167,15 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
       <!-- How it Works Section -->
       <section class="section section-steps" id="how-it-works">
         <div class="container">
-          <h2>Comment ca marche</h2>
+          <h2>Comment ça marche</h2>
           <div class="steps">
             <div class="step">
               <div class="step-number">1</div>
               <div class="step-icon">
                 <mat-icon>smartphone</mat-icon>
               </div>
-              <h3>Scannez ou decrivez</h3>
-              <p>Photographiez ou decrivez votre appareil</p>
+              <h3>Scannez ou décrivez</h3>
+              <p>Photographiez ou décrivez votre appareil</p>
             </div>
             <div class="step-arrow">
               <mat-icon>arrow_forward</mat-icon>
@@ -185,8 +185,8 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
               <div class="step-icon">
                 <mat-icon>analytics</mat-icon>
               </div>
-              <h3>Evaluation instantanee</h3>
-              <p>Valeur, reparabilite, options de valorisation</p>
+              <h3>Évaluation instantanée</h3>
+              <p>Valeur, réparabilité, options de valorisation</p>
             </div>
             <div class="step-arrow">
               <mat-icon>arrow_forward</mat-icon>
@@ -197,7 +197,7 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
                 <mat-icon>alt_route</mat-icon>
               </div>
               <h3>Choisissez votre option</h3>
-              <p>Reparer, revendre, recycler ou donner</p>
+              <p>Réparer, revendre, recycler ou donner</p>
             </div>
             <div class="step-arrow">
               <mat-icon>arrow_forward</mat-icon>
@@ -207,7 +207,7 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
               <div class="step-icon">
                 <mat-icon>emoji_events</mat-icon>
               </div>
-              <h3>Recevez vos recompenses</h3>
+              <h3>Recevez vos récompenses</h3>
               <p>Tokens et certificat d'impact</p>
             </div>
           </div>
@@ -221,19 +221,19 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
           <div class="trust-items">
             <div class="trust-item">
               <mat-icon>verified</mat-icon>
-              <span>Acteurs partenaires certifies</span>
+              <span>Acteurs partenaires certifiés</span>
             </div>
             <div class="trust-item">
               <mat-icon>visibility</mat-icon>
-              <span>Demarche transparente</span>
+              <span>Démarche transparente</span>
             </div>
             <div class="trust-item">
               <mat-icon>favorite</mat-icon>
-              <span>Logique d'economie circulaire et solidaire</span>
+              <span>Logique d'économie circulaire et solidaire</span>
             </div>
             <div class="trust-item">
               <mat-icon>fact_check</mat-icon>
-              <span>Donnees claires, accessibles et verifiables</span>
+              <span>Données claires, accessibles et vérifiables</span>
             </div>
           </div>
         </div>
@@ -242,8 +242,8 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
       <!-- Final CTA -->
       <section class="section section-final-cta">
         <div class="container">
-          <h2>Rejoindre une demarche responsable</h2>
-          <p>Participez a l'economie circulaire en toute simplicite.</p>
+          <h2>Rejoindre une démarche responsable</h2>
+          <p>Participez à l'économie circulaire en toute simplicité.</p>
           <a mat-raised-button color="primary" routerLink="/auth/register" class="cta-final">
             Commencer maintenant
           </a>

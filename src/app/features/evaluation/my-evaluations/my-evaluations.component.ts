@@ -40,27 +40,27 @@ import {
     <div class="container">
       <header class="page-header">
         <div>
-          <h1>Mes evaluations</h1>
-          <p class="subtitle">Historique de toutes vos evaluations d'appareils</p>
+          <h1>Mes évaluations</h1>
+          <p class="subtitle">Historique de toutes vos évaluations d'appareils</p>
         </div>
         <a mat-raised-button color="primary" routerLink="/evaluation">
           <mat-icon>add</mat-icon>
-          Nouvelle evaluation
+          Nouvelle évaluation
         </a>
       </header>
 
       @if (loading()) {
         <div class="loading-container">
           <mat-spinner diameter="48"></mat-spinner>
-          <p>Chargement de vos evaluations...</p>
+          <p>Chargement de vos évaluations...</p>
         </div>
       } @else if (evaluations().length === 0) {
         <mat-card class="empty-state">
           <mat-icon>assessment</mat-icon>
-          <h2>Aucune evaluation</h2>
-          <p>Vous n'avez pas encore fait evaluer d'appareils.</p>
+          <h2>Aucune évaluation</h2>
+          <p>Vous n'avez pas encore fait évaluer d'appareils.</p>
           <a mat-raised-button color="primary" routerLink="/evaluation">
-            Evaluer un appareil
+            Évaluer un appareil
           </a>
         </mat-card>
       } @else {
@@ -121,7 +121,7 @@ import {
                     <mat-icon>euro</mat-icon>
                     <span class="value">{{ getEstimatedValue(eval) | currency:'EUR':'symbol':'1.0-0' }}</span>
                   </div>
-                  <span class="value-label">Valeur estimee de rachat</span>
+                  <span class="value-label">Valeur estimée de rachat</span>
                 </div>
 
                 <!-- Decision -->
@@ -156,7 +156,7 @@ import {
               <mat-divider></mat-divider>
 
               <div class="card-footer">
-                <span class="evaluation-id">Evaluation #{{ eval.id }}</span>
+                <span class="evaluation-id">Évaluation #{{ eval.id }}</span>
                 <div class="actions">
                   <button mat-stroked-button color="primary" (click)="$event.stopPropagation(); viewDetails(eval)">
                     <mat-icon>visibility</mat-icon>

@@ -125,7 +125,7 @@ import { PartnerApiPlan, DataScope } from '../../../partner-analytics/models/par
                 <div class="add-plan">
                   <button mat-raised-button color="primary">
                     <mat-icon>add</mat-icon>
-                    Creer un nouveau plan
+                    Créer un nouveau plan
                   </button>
                 </div>
               }

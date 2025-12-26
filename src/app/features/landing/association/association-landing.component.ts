@@ -26,10 +26,10 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
       <!-- Hero Section -->
       <section class="hero" id="concept">
         <div class="hero-content">
-          <h1>Donnez plus de visibilite et de valeur a vos actions.</h1>
+          <h1>Donnez plus de visibilité et de valeur à vos actions.</h1>
           <p class="hero-subtitle">
             Circular Electronics accompagne les associations dans la collecte,
-            la tracabilite et la valorisation des equipements electroniques.
+            la traçabilité et la valorisation des équipements électroniques.
           </p>
           <div class="hero-cta">
             <a mat-raised-button color="primary" routerLink="/auth/register" class="cta-primary">
@@ -71,35 +71,35 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
       <!-- Solution Section -->
       <section class="section section-solution" id="how-it-works">
         <div class="container">
-          <h2>Une plateforme pensee pour les acteurs de l'ESS.</h2>
+          <h2>Une plateforme pensée pour les acteurs de l'ESS.</h2>
           <div class="features">
             <div class="feature">
               <div class="feature-icon feature-tracability">
                 <mat-icon>receipt_long</mat-icon>
               </div>
-              <h3>Tracabilite simplifiee</h3>
-              <p>Declarez vos collectes sans complexite reglementaire.</p>
+              <h3>Traçabilité simplifiée</h3>
+              <p>Déclarez vos collectes sans complexité réglementaire.</p>
             </div>
             <div class="feature">
               <div class="feature-icon feature-visibility">
                 <mat-icon>campaign</mat-icon>
               </div>
-              <h3>Visibilite Publique</h3>
-              <p>Vos actions sont valorisees aupres des citoyens et partenaires.</p>
+              <h3>Visibilité Publique</h3>
+              <p>Vos actions sont valorisées auprès des citoyens et partenaires.</p>
             </div>
             <div class="feature">
               <div class="feature-icon feature-coordination">
                 <mat-icon>hub</mat-icon>
               </div>
-              <h3>Coordination Ecosysteme</h3>
-              <p>Vous etes integres a un reseau structure et fiable.</p>
+              <h3>Coordination Écosystème</h3>
+              <p>Vous êtes intégrés à un réseau structuré et fiable.</p>
             </div>
             <div class="feature">
               <div class="feature-icon feature-support">
                 <mat-icon>support</mat-icon>
               </div>
               <h3>Soutien & Avantages</h3>
-              <p>Acces a des conditions adaptees et a des avantages partenaires.</p>
+              <p>Accès à des conditions adaptées et à des avantages partenaires.</p>
             </div>
           </div>
         </div>
@@ -121,11 +121,11 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
               <ul>
                 <li>
                   <mat-icon>check_circle</mat-icon>
-                  Respect de l'economie sociale et solidaire
+                  Respect de l'économie sociale et solidaire
                 </li>
                 <li>
                   <mat-icon>check_circle</mat-icon>
-                  Tarification adaptee a vos moyens
+                  Tarification adaptée à vos moyens
                 </li>
                 <li>
                   <mat-icon>check_circle</mat-icon>
@@ -141,7 +141,7 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
       <section class="section section-final-cta">
         <div class="container">
           <h2>Parlons de votre association</h2>
-          <p>Decouvrez comment Circular Electronics peut vous accompagner.</p>
+          <p>Découvrez comment Circular Electronics peut vous accompagner.</p>
           <a mat-raised-button color="primary" routerLink="/contact" class="cta-final">
             Nous contacter
           </a>

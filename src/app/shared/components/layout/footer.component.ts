@@ -29,18 +29,18 @@ import { MatIconModule } from '@angular/material/icon';
               <li><a routerLink="/actors/individuals">Particuliers</a></li>
               <li><a routerLink="/actors/associations">Associations</a></li>
               <li><a routerLink="/actors/companies">Entreprises</a></li>
-              <li><a routerLink="/actors/communities">Collectivites</a></li>
+              <li><a routerLink="/actors/communities">Collectivités</a></li>
             </ul>
           </div>
 
           <!-- Colonne 3 - Confiance & Régulation -->
           <div class="footer-column">
-            <h3 class="column-title">Confiance & Regulation</h3>
+            <h3 class="column-title">Confiance & Régulation</h3>
             <ul class="footer-links">
-              <li><a routerLink="/trust/traceability">Tracabilite</a></li>
-              <li><a routerLink="/trust/rep-compliance">Conformite REP</a></li>
-              <li><a routerLink="/trust/methodology">Methodologie</a></li>
-              <li><a routerLink="/trust/data-security">Securite des donnees</a></li>
+              <li><a routerLink="/trust/traceability">Traçabilité</a></li>
+              <li><a routerLink="/trust/rep-compliance">Conformité REP</a></li>
+              <li><a routerLink="/trust/methodology">Méthodologie</a></li>
+              <li><a routerLink="/trust/data-security">Sécurité des données</a></li>
             </ul>
           </div>
 
@@ -49,9 +49,9 @@ import { MatIconModule } from '@angular/material/icon';
             <h3 class="column-title">Ressources</h3>
             <ul class="footer-links">
               <li><a routerLink="/resources/blog">Blog</a></li>
-              <li><a routerLink="/resources/studies">Etudes & chiffres</a></li>
+              <li><a routerLink="/resources/studies">Études & chiffres</a></li>
               <li><a routerLink="/resources/press">Presse</a></li>
-              <li><a routerLink="/resources/faq">FAQ reglementaire</a></li>
+              <li><a routerLink="/resources/faq">FAQ réglementaire</a></li>
             </ul>
           </div>
         </div>
@@ -61,20 +61,20 @@ import { MatIconModule } from '@angular/material/icon';
       <div class="footer-bottom">
         <div class="footer-container bottom-container">
           <div class="copyright">
-            &copy; {{ currentYear }} Circular Electronics - Tous droits reserves
+            &copy; {{ currentYear }} Circular Electronics - Tous droits réservés
           </div>
 
           <div class="legal-links">
-            <a routerLink="/legal/terms">Mentions legales</a>
+            <a routerLink="/legal/terms">Mentions légales</a>
             <span class="separator">|</span>
-            <a routerLink="/legal/privacy">Politique de confidentialite</a>
+            <a routerLink="/legal/privacy">Politique de confidentialité</a>
             <span class="separator">|</span>
             <a routerLink="/contact/institutional">Contact institutionnel</a>
           </div>
 
           <div class="signature">
             <mat-icon>eco</mat-icon>
-            <span>"La technologie au service d'une economie circulaire de confiance."</span>
+            <span>"La technologie au service d'une économie circulaire de confiance."</span>
           </div>
         </div>
       </div>

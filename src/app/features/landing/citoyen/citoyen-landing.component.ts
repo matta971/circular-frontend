@@ -26,10 +26,10 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
       <!-- Hero Section -->
       <section class="hero" id="concept">
         <div class="hero-content">
-          <h1>Donner une seconde vie a vos appareils n'a jamais ete aussi clair.</h1>
+          <h1>Donnez une seconde vie a vos appareils et soyez recompense.</h1>
           <p class="hero-subtitle">
-            Recycler, reparer et valoriser vos equipements electroniques,
-            en toute transparence, avec des acteurs locaux et responsables.
+            Evaluez, reparez, revendez ou recyclez vos equipements electroniques.
+            Gagnez des tokens a chaque geste eco-responsable, en toute transparence.
           </p>
           <div class="hero-cta">
             <a mat-raised-button color="primary" routerLink="/auth/register" class="cta-primary">
@@ -104,6 +104,66 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
         </div>
       </section>
 
+      <!-- Benefits Section -->
+      <section class="section section-benefits" id="benefits">
+        <div class="container">
+          <h2>Tout ce que vous pouvez faire avec Circular</h2>
+          <p class="section-text">
+            Des outils simples pour valoriser vos appareils et agir pour la planete
+          </p>
+          <div class="benefits-grid">
+            <div class="benefit-card">
+              <div class="benefit-icon">
+                <mat-icon>calculate</mat-icon>
+              </div>
+              <h3>Evaluez la valeur</h3>
+              <p>Obtenez instantanement une estimation de la valeur de votre appareil grace a notre IA. Simple, rapide et transparent.</p>
+              <ul class="benefit-features">
+                <li><mat-icon>check_circle</mat-icon> Estimation en quelques secondes</li>
+                <li><mat-icon>check_circle</mat-icon> Prix du marche actualise</li>
+                <li><mat-icon>check_circle</mat-icon> Comparaison avec les prix neufs</li>
+              </ul>
+            </div>
+            <div class="benefit-card">
+              <div class="benefit-icon">
+                <mat-icon>build</mat-icon>
+              </div>
+              <h3>Reparez facilement</h3>
+              <p>Decouvrez si votre appareil est reparable, ou le faire reparer et a quel cout estime.</p>
+              <ul class="benefit-features">
+                <li><mat-icon>check_circle</mat-icon> Score de reparabilite</li>
+                <li><mat-icon>check_circle</mat-icon> Reparateurs certifies pres de chez vous</li>
+                <li><mat-icon>check_circle</mat-icon> Estimation du cout de reparation</li>
+              </ul>
+            </div>
+            <div class="benefit-card">
+              <div class="benefit-icon">
+                <mat-icon>storefront</mat-icon>
+              </div>
+              <h3>Revendez simplement</h3>
+              <p>Mettez en vente vos appareils sur notre marketplace ou trouvez un acheteur solidaire.</p>
+              <ul class="benefit-features">
+                <li><mat-icon>check_circle</mat-icon> Annonces en quelques clics</li>
+                <li><mat-icon>check_circle</mat-icon> Certificat de tracabilite inclus</li>
+                <li><mat-icon>check_circle</mat-icon> Paiement securise</li>
+              </ul>
+            </div>
+            <div class="benefit-card highlight">
+              <div class="benefit-icon">
+                <mat-icon>card_giftcard</mat-icon>
+              </div>
+              <h3>Gagnez des recompenses</h3>
+              <p>Chaque geste eco-responsable vous rapporte des tokens echangeables contre des avantages.</p>
+              <ul class="benefit-features">
+                <li><mat-icon>check_circle</mat-icon> Tokens pour chaque appareil depose</li>
+                <li><mat-icon>check_circle</mat-icon> Bonus si reparation ou reemploi</li>
+                <li><mat-icon>check_circle</mat-icon> Echangez contre des bons d'achat</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- How it Works Section -->
       <section class="section section-steps" id="how-it-works">
         <div class="container">
@@ -112,10 +172,10 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
             <div class="step">
               <div class="step-number">1</div>
               <div class="step-icon">
-                <mat-icon>add_circle</mat-icon>
+                <mat-icon>smartphone</mat-icon>
               </div>
-              <h3>Deposez ou declarez</h3>
-              <p>Enregistrez votre appareil en quelques clics</p>
+              <h3>Scannez ou decrivez</h3>
+              <p>Photographiez ou decrivez votre appareil</p>
             </div>
             <div class="step-arrow">
               <mat-icon>arrow_forward</mat-icon>
@@ -123,10 +183,10 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
             <div class="step">
               <div class="step-number">2</div>
               <div class="step-icon">
-                <mat-icon>alt_route</mat-icon>
+                <mat-icon>analytics</mat-icon>
               </div>
-              <h3>Orientation responsable</h3>
-              <p>Il est oriente vers le bon acteur local</p>
+              <h3>Evaluation instantanee</h3>
+              <p>Valeur, reparabilite, options de valorisation</p>
             </div>
             <div class="step-arrow">
               <mat-icon>arrow_forward</mat-icon>
@@ -134,10 +194,21 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
             <div class="step">
               <div class="step-number">3</div>
               <div class="step-icon">
-                <mat-icon>visibility</mat-icon>
+                <mat-icon>alt_route</mat-icon>
               </div>
-              <h3>Visualisez l'impact</h3>
-              <p>Suivez son parcours et son impact reel</p>
+              <h3>Choisissez votre option</h3>
+              <p>Reparer, revendre, recycler ou donner</p>
+            </div>
+            <div class="step-arrow">
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+            <div class="step">
+              <div class="step-number">4</div>
+              <div class="step-icon">
+                <mat-icon>emoji_events</mat-icon>
+              </div>
+              <h3>Recevez vos recompenses</h3>
+              <p>Tokens et certificat d'impact</p>
             </div>
           </div>
         </div>
@@ -330,6 +401,111 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
     /* Solution Section */
     .section-solution {
       background: white;
+    }
+
+    /* Benefits Section */
+    .section-benefits {
+      background: linear-gradient(180deg, #f8fdf9 0%, #e8f5e9 100%);
+    }
+
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .benefit-card {
+      background: white;
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+
+    .benefit-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.1);
+    }
+
+    .benefit-card.highlight {
+      background: linear-gradient(135deg, #19e166 0%, #12b050 100%);
+      color: white;
+
+      h3, p {
+        color: white;
+      }
+
+      .benefit-icon {
+        background: rgba(255, 255, 255, 0.2);
+
+        mat-icon {
+          color: white;
+        }
+      }
+
+      .benefit-features li {
+        color: rgba(255, 255, 255, 0.95);
+
+        mat-icon {
+          color: white;
+        }
+      }
+    }
+
+    .benefit-icon {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 1.25rem;
+
+      mat-icon {
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+        color: var(--ce-secondary, #19e166);
+      }
+    }
+
+    .benefit-card h3 {
+      font-size: 1.25rem;
+      font-weight: 600;
+      color: var(--ce-gray-900, #212121);
+      margin: 0 0 0.75rem 0;
+    }
+
+    .benefit-card > p {
+      color: var(--ce-gray-600, #757575);
+      line-height: 1.6;
+      margin: 0 0 1.25rem 0;
+    }
+
+    .benefit-features {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+
+      li {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--ce-gray-700, #616161);
+
+        mat-icon {
+          font-size: 18px;
+          width: 18px;
+          height: 18px;
+          color: var(--ce-secondary, #19e166);
+        }
+      }
     }
 
     .pillars {
@@ -541,6 +717,10 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
       .pillars {
         grid-template-columns: 1fr;
         gap: 1.5rem;
+      }
+
+      .benefits-grid {
+        grid-template-columns: 1fr;
       }
 
       .steps {

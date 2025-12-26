@@ -239,6 +239,23 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.initGoogleSignIn();
     this.initFacebookSdk();
+    this.handleOAuthRedirect();
+  }
+
+  private handleOAuthRedirect(): void {
+    // Check if we have an id_token in the URL fragment (OAuth redirect)
+    const fragment = window.location.hash.substring(1);
+    if (fragment && fragment.includes('id_token=')) {
+      const params = new URLSearchParams(fragment);
+      const idToken = params.get('id_token');
+
+      if (idToken) {
+        // Clear the URL fragment
+        window.history.replaceState({}, document.title, window.location.pathname);
+        // Process the token
+        this.handleOAuthLogin('GOOGLE', idToken);
+      }
+    }
   }
 
   private initGoogleSignIn(): void {
@@ -282,25 +299,62 @@ export class LoginComponent implements OnInit {
   }
 
   loginWithGoogle(): void {
-    if (typeof google === 'undefined' || !this.googleClientId) {
-      this.error.set('Google Sign-In non disponible');
+    if (!this.googleClientId) {
+      this.error.set('Google Sign-In non configuré');
       return;
     }
 
-    google.accounts.id.prompt((notification: any) => {
-      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-        // Fallback to popup mode
-        google.accounts.oauth2.initTokenClient({
-          client_id: this.googleClientId,
-          scope: 'email profile',
-          callback: (response: any) => {
-            if (response.access_token) {
-              this.handleOAuthLogin('GOOGLE', response.access_token);
-            }
+    // Build OAuth URL for ID token
+    const redirectUri = window.location.origin + '/auth/login';
+    const nonce = Math.random().toString(36).substring(2);
+
+    const authUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' +
+      `client_id=${this.googleClientId}` +
+      `&redirect_uri=${encodeURIComponent(redirectUri)}` +
+      '&response_type=id_token' +
+      '&scope=openid%20email%20profile' +
+      `&nonce=${nonce}`;
+
+    // Open popup
+    const width = 500;
+    const height = 600;
+    const left = (window.screen.width - width) / 2;
+    const top = (window.screen.height - height) / 2;
+
+    const popup = window.open(
+      authUrl,
+      'Google Sign-In',
+      `width=${width},height=${height},left=${left},top=${top}`
+    );
+
+    // Listen for the redirect with token
+    const checkPopup = setInterval(() => {
+      try {
+        if (popup?.closed) {
+          clearInterval(checkPopup);
+          return;
+        }
+
+        const popupUrl = popup?.location?.href;
+        if (popupUrl && popupUrl.includes('id_token=')) {
+          clearInterval(checkPopup);
+          popup?.close();
+
+          // Extract id_token from URL fragment
+          const fragment = popupUrl.split('#')[1];
+          const params = new URLSearchParams(fragment);
+          const idToken = params.get('id_token');
+
+          if (idToken) {
+            this.ngZone.run(() => {
+              this.handleOAuthLogin('GOOGLE', idToken);
+            });
           }
-        }).requestAccessToken();
+        }
+      } catch (e) {
+        // Cross-origin error - popup still on Google domain
       }
-    });
+    }, 500);
   }
 
   private handleGoogleCredentialResponse(response: any): void {

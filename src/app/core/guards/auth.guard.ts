@@ -50,6 +50,19 @@ export const driverGuard: CanActivateFn = () => {
   return false;
 };
 
+export const technicianGuard: CanActivateFn = () => {
+  const authService = inject(AuthService);
+  const router = inject(Router);
+
+  // Technician or Admin can access Partner Ops
+  if (authService.isTechnician() || authService.isAdmin()) {
+    return true;
+  }
+
+  router.navigate(['/']);
+  return false;
+};
+
 export const homeGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);

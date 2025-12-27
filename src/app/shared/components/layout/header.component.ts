@@ -117,7 +117,17 @@ import { NotificationService } from '../../../core/services/notification.service
             Mes Tokens & Vouchers
           </a>
           <mat-divider></mat-divider>
+          @if (authService.isTechnician()) {
+            <a mat-menu-item routerLink="/ops">
+              <mat-icon>engineering</mat-icon>
+              Portail Opérations
+            </a>
+          }
           @if (authService.isAdmin()) {
+            <a mat-menu-item routerLink="/ops">
+              <mat-icon>engineering</mat-icon>
+              Portail Opérations
+            </a>
             <a mat-menu-item routerLink="/admin">
               <mat-icon>admin_panel_settings</mat-icon>
               Administration

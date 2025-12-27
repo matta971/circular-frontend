@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, guestGuard, adminGuard, homeGuard } from './core/guards/auth.guard';
+import { authGuard, guestGuard, adminGuard, technicianGuard, homeGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -64,6 +64,11 @@ export const routes: Routes = [
   {
     path: 'notifications',
     loadChildren: () => import('./features/notifications/notifications.routes').then(m => m.NOTIFICATIONS_ROUTES)
+  },
+  {
+    path: 'ops',
+    canActivate: [technicianGuard],
+    loadChildren: () => import('./features/partner-ops/partner-ops.routes').then(m => m.PARTNER_OPS_ROUTES)
   },
   {
     path: 'admin',

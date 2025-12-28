@@ -35,7 +35,7 @@ import { Certificate, CertificateType, DeviceTraceability, TraceabilityEvent } f
     } @else {
       <div class="certificate-detail">
         <mat-card class="main-card">
-          <div class="certificate-banner" [class]="certificate.type.toLowerCase()">
+          <div class="certificate-banner" [class]="getTypeClass(certificate.type)">
             <mat-icon>{{ getTypeIcon(certificate.type) }}</mat-icon>
             <div>
               <h1>Certificat de {{ getTypeLabel(certificate.type) }}</h1>
@@ -46,8 +46,8 @@ import { Certificate, CertificateType, DeviceTraceability, TraceabilityEvent } f
             <div class="info-grid">
               <div class="info-item">
                 <span class="label">Statut</span>
-                <mat-chip [class]="certificate.status.toLowerCase()">
-                  {{ getStatusLabel(certificate.status) }}
+                <mat-chip [class]="(certificate.status || 'issued').toLowerCase()">
+                  {{ getStatusLabel(certificate.status || 'ISSUED') }}
                 </mat-chip>
               </div>
               <div class="info-item">
@@ -68,14 +68,19 @@ import { Certificate, CertificateType, DeviceTraceability, TraceabilityEvent } f
               }
             </div>
 
-            @if (certificate.device) {
+            @if (certificate.device || getDeviceFromContent(certificate)) {
               <mat-divider></mat-divider>
               <h3>Appareil concerné</h3>
               <div class="device-info">
                 <mat-icon>smartphone</mat-icon>
                 <div>
-                  <strong>{{ certificate.device.brand }} {{ certificate.device.model }}</strong>
-                  <span *ngIf="certificate.device.serialNumber">S/N: {{ certificate.device.serialNumber }}</span>
+                  @if (certificate.device) {
+                    <strong>{{ certificate.device.brand }} {{ certificate.device.model }}</strong>
+                    <span *ngIf="certificate.device.serialNumber">S/N: {{ certificate.device.serialNumber }}</span>
+                  } @else {
+                    <strong>{{ getDeviceFromContent(certificate) }}</strong>
+                    <span>ID: {{ certificate.deviceId }}</span>
+                  }
                 </div>
               </div>
             }
@@ -162,6 +167,9 @@ import { Certificate, CertificateType, DeviceTraceability, TraceabilityEvent } f
     .certificate-banner.refurbishment { background: linear-gradient(135deg, #ff9800, #ef6c00); }
     .certificate-banner.destruction { background: linear-gradient(135deg, #f44336, #c62828); }
     .certificate-banner.traceability { background: linear-gradient(135deg, #9c27b0, #6a1b9a); }
+    .certificate-banner.reuse { background: linear-gradient(135deg, #10E068, #0ba84a); }
+    .certificate-banner.repair { background: linear-gradient(135deg, #1F23D6, #1518a0); }
+    .certificate-banner.default { background: linear-gradient(135deg, #607d8b, #455a64); }
     .certificate-banner mat-icon { font-size: 48px; width: 48px; height: 48px; }
     .certificate-banner h1 { margin: 0; font-size: 1.5rem; }
     .cert-number { font-family: monospace; opacity: 0.9; }
@@ -249,19 +257,40 @@ export class CertificateDetailComponent implements OnInit {
     }
   }
 
+  getTypeClass(type: CertificateType | string): string {
+    const classes: Record<string, string> = {
+      RECYCLING: 'recycling', DONATION: 'donation', REFURBISHMENT: 'refurbishment',
+      DESTRUCTION: 'destruction', TRACEABILITY: 'traceability', REUSE: 'reuse', REPAIR: 'repair'
+    };
+    return classes[type] || 'default';
+  }
+
   getTypeIcon(type: CertificateType | string): string {
-    const icons: Record<string, string> = { RECYCLING: 'recycling', DONATION: 'volunteer_activism', REFURBISHMENT: 'build', DESTRUCTION: 'delete_forever', TRACEABILITY: 'timeline' };
+    const icons: Record<string, string> = {
+      RECYCLING: 'recycling', DONATION: 'volunteer_activism', REFURBISHMENT: 'build',
+      DESTRUCTION: 'delete_forever', TRACEABILITY: 'timeline', REUSE: 'autorenew', REPAIR: 'handyman'
+    };
     return icons[type] || 'description';
   }
 
   getTypeLabel(type: CertificateType | string): string {
-    const labels: Record<string, string> = { RECYCLING: 'Recyclage', DONATION: 'Don', REFURBISHMENT: 'Reconditionnement', DESTRUCTION: 'Destruction', TRACEABILITY: 'Traçabilité' };
+    const labels: Record<string, string> = {
+      RECYCLING: 'Recyclage', DONATION: 'Don', REFURBISHMENT: 'Reconditionnement',
+      DESTRUCTION: 'Destruction', TRACEABILITY: 'Traçabilité', REUSE: 'Réemploi', REPAIR: 'Réparation'
+    };
     return labels[type] || type;
   }
 
   getStatusLabel(status: string): string {
     const labels: Record<string, string> = { DRAFT: 'Brouillon', ISSUED: 'Émis', VERIFIED: 'Vérifié', REVOKED: 'Révoqué', EXPIRED: 'Expiré' };
     return labels[status] || status;
+  }
+
+  getDeviceFromContent(certificate: Certificate): string | null {
+    const content = (certificate as any).content;
+    if (!content) return null;
+    const match = content.match(/Appareil:\s*(.+)/);
+    return match ? match[1].trim() : null;
   }
 
   getEventIcon(type: string): string {

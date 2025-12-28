@@ -75,6 +75,12 @@ export const routes: Routes = [
     canActivate: [adminGuard],
     loadChildren: () => import('./features/admin/admin.routes').then(m => m.ADMIN_ROUTES)
   },
+  // Public certificate verification
+  {
+    path: 'verify/:certificateNumber',
+    loadComponent: () => import('./features/certificates/certificate-verify-direct/certificate-verify-direct.component').then(m => m.CertificateVerifyDirectComponent),
+    title: 'Vérification de certificat - Circular Electronics'
+  },
   // Landing pages (public)
   {
     path: 'citoyen',

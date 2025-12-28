@@ -151,7 +151,7 @@ export class CertificateVerifyComponent {
     this.verifying = true;
     this.result = null;
 
-    this.certificateService.publicVerify(this.certificateNumber).subscribe({
+    this.certificateService.verifyCertificate(this.certificateNumber).subscribe({
       next: (res) => {
         this.result = res;
         this.verifying = false;

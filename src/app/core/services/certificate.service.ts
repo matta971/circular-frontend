@@ -31,7 +31,7 @@ export class CertificateService {
   }
 
   getCertificate(certificateNumber: string): Observable<Certificate | null> {
-    return this.http.get<ApiResponse<Certificate>>(`${this.apiUrl}/certificates/${certificateNumber}`).pipe(
+    return this.http.get<ApiResponse<Certificate>>(`${this.apiUrl}/certificates/number/${certificateNumber}`).pipe(
       map(response => response.data),
       catchError(() => of(null))
     );
@@ -64,8 +64,31 @@ export class CertificateService {
   }
 
   verifyCertificate(certificateNumber: string): Observable<CertificateVerification> {
-    return this.http.get<ApiResponse<CertificateVerification>>(`${this.apiUrl}/verify/${certificateNumber}`).pipe(
-      map(response => response.data),
+    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/verify/${certificateNumber}`).pipe(
+      map(response => {
+        const data = response.data;
+        // Map flat backend response to expected interface
+        return {
+          valid: data.valid,
+          verifiedAt: data.issuedAt || new Date().toISOString(),
+          blockchainVerified: false,
+          message: data.verificationMessage || (data.valid ? 'Certificate verified' : 'Certificate not found'),
+          certificate: data.valid ? {
+            id: data.deviceId,
+            certificateNumber: data.certificateNumber,
+            type: data.type,
+            deviceId: data.deviceId,
+            issuedAt: data.issuedAt,
+            status: 'ISSUED' as any,
+            device: {
+              id: data.deviceId,
+              type: data.deviceDescription || 'Unknown',
+              brand: data.deviceDescription?.split(' ')[0],
+              model: data.deviceDescription?.split(' ').slice(1).join(' ')
+            }
+          } : undefined
+        } as CertificateVerification;
+      }),
       catchError(() => of({
         valid: false,
         verifiedAt: new Date().toISOString(),
@@ -98,14 +121,13 @@ export class CertificateService {
 
   // ============ PUBLIC VERIFICATION ============
 
-  publicVerify(certificateNumber: string): Observable<CertificateVerification> {
-    return this.http.get<ApiResponse<CertificateVerification>>(`${this.apiUrl}/public/verify/${certificateNumber}`).pipe(
+  /**
+   * Direct verification - returns raw API response for public verify page
+   */
+  verifyDirect(certificateNumber: string): Observable<any> {
+    return this.http.get<ApiResponse<any>>(`${this.apiUrl}/verify/${certificateNumber}`).pipe(
       map(response => response.data),
-      catchError(() => of({
-        valid: false,
-        verifiedAt: new Date().toISOString(),
-        message: 'Certificate not found or invalid'
-      }))
+      catchError(() => of({ valid: false }))
     );
   }
 }

@@ -1029,8 +1029,16 @@ export class OpsDeviceDetailComponent implements OnInit {
 
   confirmDiagnosis(): void {
     this.processing.set(true);
-    this.opsService.confirmDiagnosis(this.deviceId).subscribe({
-      next: () => this.handleSuccess('Diagnostic confirmé'),
+    // First save the diagnosis data, then confirm
+    const request: DiagnosisUpdateRequest = this.diagnosisForm.value;
+    this.opsService.updateDiagnosis(this.deviceId, request).subscribe({
+      next: () => {
+        // Now confirm the diagnosis
+        this.opsService.confirmDiagnosis(this.deviceId).subscribe({
+          next: () => this.handleSuccess('Diagnostic confirmé'),
+          error: (err) => this.handleError(err)
+        });
+      },
       error: (err) => this.handleError(err)
     });
   }

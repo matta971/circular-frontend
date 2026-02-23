@@ -1,19 +1,31 @@
-import { Component, OnInit, signal } from '@angular/core';
+import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { MatCardModule } from '@angular/material/card';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatChipsModule } from '@angular/material/chips';
+import { environment } from '../../../../environments/environment';
 
-interface Certificate {
+interface CertificateDto {
   id: number;
-  deviceId: number;
+  certificateNumber: string;
   type: string;
-  status: string;
-  generatedAt: string;
-  downloadUrl: string;
+  userId: number;
+  deviceId: number;
+  collectionRequestId: number;
+  dropOffId: number;
+  filePath: string;
+  content: string;
+  issuedAt: string;
+}
+
+interface ApiResponse<T> {
+  success: boolean;
+  data: T;
+  message: string;
 }
 
 @Component({
@@ -47,14 +59,20 @@ interface Certificate {
         </mat-card>
       } @else {
         <table mat-table [dataSource]="certificates()" class="mat-elevation-z2">
-          <ng-container matColumnDef="id">
-            <th mat-header-cell *matHeaderCellDef>ID</th>
-            <td mat-cell *matCellDef="let c">#{{ c.id }}</td>
+          <ng-container matColumnDef="certificateNumber">
+            <th mat-header-cell *matHeaderCellDef>N° Certificat</th>
+            <td mat-cell *matCellDef="let c">{{ c.certificateNumber }}</td>
           </ng-container>
 
           <ng-container matColumnDef="deviceId">
             <th mat-header-cell *matHeaderCellDef>Appareil</th>
-            <td mat-cell *matCellDef="let c">#{{ c.deviceId }}</td>
+            <td mat-cell *matCellDef="let c">
+              @if (c.deviceId) {
+                #{{ c.deviceId }}
+              } @else {
+                <span class="na">-</span>
+              }
+            </td>
           </ng-container>
 
           <ng-container matColumnDef="type">
@@ -64,24 +82,16 @@ interface Certificate {
             </td>
           </ng-container>
 
-          <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef>Statut</th>
-            <td mat-cell *matCellDef="let c">
-              <mat-chip [color]="c.status === 'VALID' ? 'primary' : 'warn'" [highlighted]="true">
-                {{ c.status === 'VALID' ? 'Valide' : 'Invalide' }}
-              </mat-chip>
-            </td>
-          </ng-container>
-
-          <ng-container matColumnDef="generatedAt">
+          <ng-container matColumnDef="issuedAt">
             <th mat-header-cell *matHeaderCellDef>Généré le</th>
-            <td mat-cell *matCellDef="let c">{{ c.generatedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+            <td mat-cell *matCellDef="let c">{{ c.issuedAt | date:'dd/MM/yyyy HH:mm' }}</td>
           </ng-container>
 
           <ng-container matColumnDef="actions">
             <th mat-header-cell *matHeaderCellDef>Actions</th>
             <td mat-cell *matCellDef="let c">
-              <button mat-icon-button color="primary" (click)="downloadCertificate(c)">
+              <button mat-icon-button color="primary" (click)="downloadCertificate(c)"
+                      [disabled]="downloading()" matTooltip="Télécharger le PDF">
                 <mat-icon>download</mat-icon>
               </button>
             </td>
@@ -101,9 +111,9 @@ interface Certificate {
         <mat-card-content>
           <p>Les certificats sont générés automatiquement lors de la finalisation d'un appareil et incluent :</p>
           <ul>
-            <li><strong>Certificat de traitement</strong> : Preuve de la décision prise (réemploi, réparation, recyclage)</li>
-            <li><strong>Bordereau de suivi</strong> : Traçabilité du parcours de l'appareil</li>
-            <li><strong>Attestation REP</strong> : Conformité réglementaire</li>
+            <li><strong>Certificat de réemploi</strong> : Preuve de remise en circulation d'un appareil fonctionnel</li>
+            <li><strong>Certificat de recyclage</strong> : Attestation de traitement conforme aux normes environnementales</li>
+            <li><strong>Certificat de traçabilité</strong> : Historique complet du parcours de l'appareil</li>
           </ul>
           <p>Tous les certificats sont horodatés et signés numériquement pour garantir leur authenticité.</p>
         </mat-card-content>
@@ -158,6 +168,10 @@ interface Certificate {
       margin-bottom: 2rem;
     }
 
+    .na {
+      color: #9e9e9e;
+    }
+
     .info-card {
       margin-top: 2rem;
       background: #e3f2fd;
@@ -184,19 +198,41 @@ interface Certificate {
   `]
 })
 export class OpsCertificatesComponent implements OnInit {
-  certificates = signal<Certificate[]>([]);
-  loading = signal(true);
+  private http = inject(HttpClient);
 
-  displayedColumns = ['id', 'deviceId', 'type', 'status', 'generatedAt', 'actions'];
+  certificates = signal<CertificateDto[]>([]);
+  loading = signal(true);
+  downloading = signal(false);
+
+  displayedColumns = ['certificateNumber', 'deviceId', 'type', 'issuedAt', 'actions'];
 
   ngOnInit(): void {
-    // TODO: Load certificates from API
-    // For now, show empty state
-    this.loading.set(false);
+    this.loadCertificates();
+  }
+
+  loadCertificates(): void {
+    this.loading.set(true);
+    this.http.get<ApiResponse<CertificateDto[]>>(`${environment.apiUrl}/traceability/certificates`)
+      .subscribe({
+        next: (response) => {
+          if (response.success && response.data) {
+            this.certificates.set(response.data);
+          }
+          this.loading.set(false);
+        },
+        error: (err) => {
+          console.error('Failed to load certificates:', err);
+          this.loading.set(false);
+        }
+      });
   }
 
   getTypeLabel(type: string): string {
     switch (type) {
+      case 'REUSE': return 'Réemploi';
+      case 'RECYCLING': return 'Recyclage';
+      case 'REPAIR': return 'Réparation';
+      case 'TRACEABILITY': return 'Traçabilité';
       case 'TREATMENT': return 'Traitement';
       case 'TRACKING': return 'Suivi';
       case 'REP': return 'REP';
@@ -204,9 +240,24 @@ export class OpsCertificatesComponent implements OnInit {
     }
   }
 
-  downloadCertificate(certificate: Certificate): void {
-    if (certificate.downloadUrl) {
-      window.open(certificate.downloadUrl, '_blank');
-    }
+  downloadCertificate(certificate: CertificateDto): void {
+    this.downloading.set(true);
+    this.http.get(`${environment.apiUrl}/traceability/certificates/${certificate.certificateNumber}/pdf`, {
+      responseType: 'blob'
+    }).subscribe({
+      next: (blob) => {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${certificate.certificateNumber}.pdf`;
+        link.click();
+        window.URL.revokeObjectURL(url);
+        this.downloading.set(false);
+      },
+      error: (err) => {
+        console.error('Failed to download certificate:', err);
+        this.downloading.set(false);
+      }
+    });
   }
 }

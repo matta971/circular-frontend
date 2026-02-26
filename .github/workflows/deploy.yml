@@ -26,6 +26,7 @@ jobs:
 
             echo "==> Pulling latest frontend code"
             cd /opt/circular/circular-frontend
+            git stash
             git pull origin master
 
             echo "==> Rebuilding frontend"

@@ -8,37 +8,62 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
-    name: Deploy Frontend
+  build-and-deploy:
+    name: Build & Deploy Frontend
     runs-on: ubuntu-latest
 
     steps:
-      - name: Deploy via SSH
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Build production
+        run: npx ng build --configuration production
+
+      - name: Deploy to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SERVER_HOST }}
+          username: ${{ secrets.SERVER_USER }}
+          key: ${{ secrets.SERVER_SSH_KEY }}
+          source: dist/circular-frontend/browser/*
+          target: /opt/circular/frontend-dist
+          strip_components: 3
+
+      - name: Restart nginx
         uses: appleboy/ssh-action@v1
         with:
           host: ${{ secrets.SERVER_HOST }}
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script_stop: true
-          command_timeout: 30m
           script: |
             set -e
 
-            echo "==> Pulling latest frontend code"
-            cd /opt/circular/circular-frontend
-            git stash
-            git pull origin master
-
-            echo "==> Rebuilding frontend"
-            cd /opt/circular/circular-backend
-            docker compose -f docker-compose.prod.yml build frontend
-
-            echo "==> Restarting frontend + nginx"
-            docker compose -f docker-compose.prod.yml up -d frontend nginx
-
-            echo "==> Cleaning up old images"
-            docker image prune -f
+            echo "==> Updating frontend files"
+            # Copy built files into the running frontend container's nginx html dir
+            CONTAINER=$(docker ps --filter "name=frontend" --format "{{.ID}}" | head -1)
+            if [ -n "$CONTAINER" ]; then
+              docker cp /opt/circular/frontend-dist/. "$CONTAINER":/usr/share/nginx/html/
+              docker exec "$CONTAINER" nginx -s reload
+              echo "==> Frontend updated via container copy + nginx reload"
+            else
+              echo "==> No frontend container found, rebuilding..."
+              cd /opt/circular/circular-frontend
+              git stash
+              git pull origin master
+              cd /opt/circular/circular-backend
+              docker compose -f docker-compose.prod.yml up -d frontend nginx
+            fi
 
             echo "==> Health check"
-            sleep 5
+            sleep 3
             curl -sf http://localhost:80 > /dev/null && echo "Frontend: OK" || echo "Frontend: FAIL"

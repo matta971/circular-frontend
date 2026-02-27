@@ -16,7 +16,7 @@ export class App {
   private router = inject(Router);
 
   // Routes that use their own layout (no standard header/footer)
-  private landingRoutes = ['/citoyen', '/association', '/entreprise'];
+  private landingRoutes = ['/citoyen', '/association', '/entreprise', '/contact'];
 
   isLandingPage = toSignal(
     this.router.events.pipe(

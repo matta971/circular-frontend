@@ -96,24 +96,18 @@ import { FooterComponent } from '../../shared/components/layout/footer.component
                 <mat-form-field appearance="outline" class="phone-prefix">
                   <mat-label>Indicatif</mat-label>
                   <mat-select formControlName="phonePrefix">
-                    <mat-option value="+33">🇫🇷 +33</mat-option>
-                    <mat-option value="+32">🇧🇪 +32</mat-option>
-                    <mat-option value="+41">🇨🇭 +41</mat-option>
-                    <mat-option value="+352">🇱🇺 +352</mat-option>
-                    <mat-option value="+377">🇲🇨 +377</mat-option>
-                    <mat-option value="+44">🇬🇧 +44</mat-option>
-                    <mat-option value="+49">🇩🇪 +49</mat-option>
-                    <mat-option value="+34">🇪🇸 +34</mat-option>
-                    <mat-option value="+39">🇮🇹 +39</mat-option>
-                    <mat-option value="+351">🇵🇹 +351</mat-option>
-                    <mat-option value="+31">🇳🇱 +31</mat-option>
-                    <mat-option value="+1">🇺🇸 +1</mat-option>
-                    <mat-option value="+1">🇨🇦 +1</mat-option>
-                    <mat-option value="+212">🇲🇦 +212</mat-option>
-                    <mat-option value="+216">🇹🇳 +216</mat-option>
-                    <mat-option value="+213">🇩🇿 +213</mat-option>
-                    <mat-option value="+221">🇸🇳 +221</mat-option>
-                    <mat-option value="+225">🇨🇮 +225</mat-option>
+                    <mat-select-trigger>
+                      {{ selectedCountry?.flag }} {{ selectedCountry?.prefix }}
+                    </mat-select-trigger>
+                    @for (country of countries; track country.code) {
+                      <mat-option [value]="country.code">
+                        <span class="country-option">
+                          <span class="country-flag">{{ country.flag }}</span>
+                          <span class="country-name">{{ country.name }}</span>
+                          <span class="country-prefix">{{ country.prefix }}</span>
+                        </span>
+                      </mat-option>
+                    }
                   </mat-select>
                 </mat-form-field>
 
@@ -262,8 +256,33 @@ import { FooterComponent } from '../../shared/components/layout/footer.component
 
     .phone-row {
       display: grid;
-      grid-template-columns: 140px 1fr;
+      grid-template-columns: 160px 1fr;
       gap: 1rem;
+    }
+
+    .country-option {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .country-flag {
+      font-size: 1.25rem;
+      line-height: 1;
+    }
+
+    .country-name {
+      flex: 1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .country-prefix {
+      color: var(--ce-gray-500, #9e9e9e);
+      font-size: 0.85rem;
+      min-width: 40px;
+      text-align: right;
     }
 
     .submit-btn {
@@ -372,7 +391,7 @@ import { FooterComponent } from '../../shared/components/layout/footer.component
       }
 
       .phone-row {
-        grid-template-columns: 120px 1fr;
+        grid-template-columns: 140px 1fr;
       }
 
       .contact-info {
@@ -384,15 +403,40 @@ import { FooterComponent } from '../../shared/components/layout/footer.component
 export class ContactComponent {
   private fb = new FormBuilder();
 
+  countries = [
+    { code: 'FR', flag: '🇫🇷', name: 'France', prefix: '+33' },
+    { code: 'BE', flag: '🇧🇪', name: 'Belgique', prefix: '+32' },
+    { code: 'CH', flag: '🇨🇭', name: 'Suisse', prefix: '+41' },
+    { code: 'LU', flag: '🇱🇺', name: 'Luxembourg', prefix: '+352' },
+    { code: 'MC', flag: '🇲🇨', name: 'Monaco', prefix: '+377' },
+    { code: 'GB', flag: '🇬🇧', name: 'Royaume-Uni', prefix: '+44' },
+    { code: 'DE', flag: '🇩🇪', name: 'Allemagne', prefix: '+49' },
+    { code: 'ES', flag: '🇪🇸', name: 'Espagne', prefix: '+34' },
+    { code: 'IT', flag: '🇮🇹', name: 'Italie', prefix: '+39' },
+    { code: 'PT', flag: '🇵🇹', name: 'Portugal', prefix: '+351' },
+    { code: 'NL', flag: '🇳🇱', name: 'Pays-Bas', prefix: '+31' },
+    { code: 'US', flag: '🇺🇸', name: 'États-Unis', prefix: '+1' },
+    { code: 'CA', flag: '🇨🇦', name: 'Canada', prefix: '+1' },
+    { code: 'MA', flag: '🇲🇦', name: 'Maroc', prefix: '+212' },
+    { code: 'TN', flag: '🇹🇳', name: 'Tunisie', prefix: '+216' },
+    { code: 'DZ', flag: '🇩🇿', name: 'Algérie', prefix: '+213' },
+    { code: 'SN', flag: '🇸🇳', name: 'Sénégal', prefix: '+221' },
+    { code: 'CI', flag: '🇨🇮', name: 'Côte d\'Ivoire', prefix: '+225' },
+  ];
+
   form = this.fb.nonNullable.group({
     name: ['', Validators.required],
     email: ['', [Validators.required, Validators.email]],
     company: [''],
     subject: ['', Validators.required],
-    phonePrefix: ['+33'],
+    phonePrefix: ['FR'],
     phone: [''],
     message: ['', Validators.required]
   });
+
+  get selectedCountry() {
+    return this.countries.find(c => c.code === this.form.controls.phonePrefix.value);
+  }
 
   private subjectLabels: Record<string, string> = {
     demo: 'Demande de démo',
@@ -405,8 +449,10 @@ export class ContactComponent {
     if (this.form.invalid) return;
 
     const { name, email, company, subject, phonePrefix, phone, message } = this.form.getRawValue();
+    const country = this.countries.find(c => c.code === phonePrefix);
+    const prefix = country?.prefix ?? '+33';
     const subjectLabel = this.subjectLabels[subject] || subject;
-    const fullPhone = phone ? `${phonePrefix} ${phone}` : '';
+    const fullPhone = phone ? `${prefix} ${phone}` : '';
 
     const mailSubject = `[Circular Electronics] ${subjectLabel}`;
     const mailBody = [

@@ -565,7 +565,7 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
       .hero {
         flex-direction: column;
         text-align: center;
-        padding: 3rem 1.5rem;
+        padding: 80px 1.5rem 3rem 1.5rem;
       }
 
       .hero-cta {

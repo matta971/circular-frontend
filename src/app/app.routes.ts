@@ -98,6 +98,11 @@ export const routes: Routes = [
     title: 'Entreprise - Circular Electronics'
   },
   {
+    path: 'contact',
+    loadComponent: () => import('./features/contact/contact.component').then(m => m.ContactComponent),
+    title: 'Contact - Circular Electronics'
+  },
+  {
     path: '**',
     redirectTo: ''
   }

@@ -92,6 +92,38 @@ import { FooterComponent } from '../../shared/components/layout/footer.component
                 </mat-form-field>
               </div>
 
+              <div class="phone-row">
+                <mat-form-field appearance="outline" class="phone-prefix">
+                  <mat-label>Indicatif</mat-label>
+                  <mat-select formControlName="phonePrefix">
+                    <mat-option value="+33">🇫🇷 +33</mat-option>
+                    <mat-option value="+32">🇧🇪 +32</mat-option>
+                    <mat-option value="+41">🇨🇭 +41</mat-option>
+                    <mat-option value="+352">🇱🇺 +352</mat-option>
+                    <mat-option value="+377">🇲🇨 +377</mat-option>
+                    <mat-option value="+44">🇬🇧 +44</mat-option>
+                    <mat-option value="+49">🇩🇪 +49</mat-option>
+                    <mat-option value="+34">🇪🇸 +34</mat-option>
+                    <mat-option value="+39">🇮🇹 +39</mat-option>
+                    <mat-option value="+351">🇵🇹 +351</mat-option>
+                    <mat-option value="+31">🇳🇱 +31</mat-option>
+                    <mat-option value="+1">🇺🇸 +1</mat-option>
+                    <mat-option value="+1">🇨🇦 +1</mat-option>
+                    <mat-option value="+212">🇲🇦 +212</mat-option>
+                    <mat-option value="+216">🇹🇳 +216</mat-option>
+                    <mat-option value="+213">🇩🇿 +213</mat-option>
+                    <mat-option value="+221">🇸🇳 +221</mat-option>
+                    <mat-option value="+225">🇨🇮 +225</mat-option>
+                  </mat-select>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="phone-number">
+                  <mat-label>Téléphone</mat-label>
+                  <input matInput type="tel" formControlName="phone" placeholder="6 12 34 56 78">
+                  <mat-icon matPrefix>phone</mat-icon>
+                </mat-form-field>
+              </div>
+
               <mat-form-field appearance="outline">
                 <mat-label>Message</mat-label>
                 <textarea matInput formControlName="message" rows="5"
@@ -228,6 +260,12 @@ import { FooterComponent } from '../../shared/components/layout/footer.component
       width: 100%;
     }
 
+    .phone-row {
+      display: grid;
+      grid-template-columns: 140px 1fr;
+      gap: 1rem;
+    }
+
     .submit-btn {
       width: 100%;
       height: 52px;
@@ -333,6 +371,10 @@ import { FooterComponent } from '../../shared/components/layout/footer.component
         grid-template-columns: 1fr;
       }
 
+      .phone-row {
+        grid-template-columns: 120px 1fr;
+      }
+
       .contact-info {
         grid-template-columns: 1fr;
       }
@@ -347,6 +389,8 @@ export class ContactComponent {
     email: ['', [Validators.required, Validators.email]],
     company: [''],
     subject: ['', Validators.required],
+    phonePrefix: ['+33'],
+    phone: [''],
     message: ['', Validators.required]
   });
 
@@ -360,14 +404,16 @@ export class ContactComponent {
   onSubmit(): void {
     if (this.form.invalid) return;
 
-    const { name, email, company, subject, message } = this.form.getRawValue();
+    const { name, email, company, subject, phonePrefix, phone, message } = this.form.getRawValue();
     const subjectLabel = this.subjectLabels[subject] || subject;
+    const fullPhone = phone ? `${phonePrefix} ${phone}` : '';
 
     const mailSubject = `[Circular Electronics] ${subjectLabel}`;
     const mailBody = [
       `Nom : ${name}`,
       `Email : ${email}`,
       company ? `Organisation : ${company}` : '',
+      fullPhone ? `Téléphone : ${fullPhone}` : '',
       `Sujet : ${subjectLabel}`,
       '',
       'Message :',

@@ -97,12 +97,19 @@ import { FooterComponent } from '../../shared/components/layout/footer.component
                   <mat-label>Indicatif</mat-label>
                   <mat-select formControlName="phonePrefix">
                     <mat-select-trigger>
-                      {{ selectedCountry?.flag }} {{ selectedCountry?.prefix }}
+                      @if (selectedCountry) {
+                        <span class="trigger-content">
+                          <img [src]="flagUrl(selectedCountry.code)" [alt]="selectedCountry.name"
+                            width="20" height="15" class="flag-img">
+                          {{ selectedCountry.prefix }}
+                        </span>
+                      }
                     </mat-select-trigger>
                     @for (country of countries; track country.code) {
                       <mat-option [value]="country.code">
                         <span class="country-option">
-                          <span class="country-flag">{{ country.flag }}</span>
+                          <img [src]="flagUrl(country.code)" [alt]="country.name"
+                            width="24" height="18" class="flag-img">
                           <span class="country-name">{{ country.name }}</span>
                           <span class="country-prefix">{{ country.prefix }}</span>
                         </span>
@@ -260,15 +267,23 @@ import { FooterComponent } from '../../shared/components/layout/footer.component
       gap: 1rem;
     }
 
+    .trigger-content {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
     .country-option {
       display: flex;
       align-items: center;
       gap: 0.5rem;
     }
 
-    .country-flag {
-      font-size: 1.25rem;
-      line-height: 1;
+    .flag-img {
+      border-radius: 2px;
+      object-fit: cover;
+      vertical-align: middle;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
     }
 
     .country-name {
@@ -404,25 +419,29 @@ export class ContactComponent {
   private fb = new FormBuilder();
 
   countries = [
-    { code: 'FR', flag: '🇫🇷', name: 'France', prefix: '+33' },
-    { code: 'BE', flag: '🇧🇪', name: 'Belgique', prefix: '+32' },
-    { code: 'CH', flag: '🇨🇭', name: 'Suisse', prefix: '+41' },
-    { code: 'LU', flag: '🇱🇺', name: 'Luxembourg', prefix: '+352' },
-    { code: 'MC', flag: '🇲🇨', name: 'Monaco', prefix: '+377' },
-    { code: 'GB', flag: '🇬🇧', name: 'Royaume-Uni', prefix: '+44' },
-    { code: 'DE', flag: '🇩🇪', name: 'Allemagne', prefix: '+49' },
-    { code: 'ES', flag: '🇪🇸', name: 'Espagne', prefix: '+34' },
-    { code: 'IT', flag: '🇮🇹', name: 'Italie', prefix: '+39' },
-    { code: 'PT', flag: '🇵🇹', name: 'Portugal', prefix: '+351' },
-    { code: 'NL', flag: '🇳🇱', name: 'Pays-Bas', prefix: '+31' },
-    { code: 'US', flag: '🇺🇸', name: 'États-Unis', prefix: '+1' },
-    { code: 'CA', flag: '🇨🇦', name: 'Canada', prefix: '+1' },
-    { code: 'MA', flag: '🇲🇦', name: 'Maroc', prefix: '+212' },
-    { code: 'TN', flag: '🇹🇳', name: 'Tunisie', prefix: '+216' },
-    { code: 'DZ', flag: '🇩🇿', name: 'Algérie', prefix: '+213' },
-    { code: 'SN', flag: '🇸🇳', name: 'Sénégal', prefix: '+221' },
-    { code: 'CI', flag: '🇨🇮', name: 'Côte d\'Ivoire', prefix: '+225' },
+    { code: 'FR', name: 'France', prefix: '+33' },
+    { code: 'BE', name: 'Belgique', prefix: '+32' },
+    { code: 'CH', name: 'Suisse', prefix: '+41' },
+    { code: 'LU', name: 'Luxembourg', prefix: '+352' },
+    { code: 'MC', name: 'Monaco', prefix: '+377' },
+    { code: 'GB', name: 'Royaume-Uni', prefix: '+44' },
+    { code: 'DE', name: 'Allemagne', prefix: '+49' },
+    { code: 'ES', name: 'Espagne', prefix: '+34' },
+    { code: 'IT', name: 'Italie', prefix: '+39' },
+    { code: 'PT', name: 'Portugal', prefix: '+351' },
+    { code: 'NL', name: 'Pays-Bas', prefix: '+31' },
+    { code: 'US', name: 'États-Unis', prefix: '+1' },
+    { code: 'CA', name: 'Canada', prefix: '+1' },
+    { code: 'MA', name: 'Maroc', prefix: '+212' },
+    { code: 'TN', name: 'Tunisie', prefix: '+216' },
+    { code: 'DZ', name: 'Algérie', prefix: '+213' },
+    { code: 'SN', name: 'Sénégal', prefix: '+221' },
+    { code: 'CI', name: 'Côte d\'Ivoire', prefix: '+225' },
   ];
+
+  flagUrl(code: string): string {
+    return `https://flagcdn.com/w40/${code.toLowerCase()}.svg`;
+  }
 
   form = this.fb.nonNullable.group({
     name: ['', Validators.required],

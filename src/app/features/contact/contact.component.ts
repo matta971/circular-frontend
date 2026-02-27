@@ -440,7 +440,7 @@ export class ContactComponent {
   ];
 
   flagUrl(code: string): string {
-    return `https://flagcdn.com/w40/${code.toLowerCase()}.svg`;
+    return `https://flagcdn.com/${code.toLowerCase()}.svg`;
   }
 
   form = this.fb.nonNullable.group({

@@ -102,6 +102,86 @@ export const routes: Routes = [
     loadComponent: () => import('./features/contact/contact.component').then(m => m.ContactComponent),
     title: 'Contact - Circular Electronics'
   },
+  // Actor redirects (→ existing landing pages)
+  { path: 'actors/individuals', redirectTo: '/citoyen' },
+  { path: 'actors/associations', redirectTo: '/association' },
+  { path: 'actors/companies', redirectTo: '/entreprise' },
+  { path: 'actors/communities', redirectTo: '/entreprise' },
+  { path: 'contact/institutional', redirectTo: '/contact' },
+  // About pages
+  {
+    path: 'about/mission',
+    loadComponent: () => import('./features/pages/about/mission.component').then(m => m.MissionComponent),
+    title: 'Mission - Circular Electronics'
+  },
+  {
+    path: 'about/vision',
+    loadComponent: () => import('./features/pages/about/vision.component').then(m => m.VisionComponent),
+    title: 'Vision - Circular Electronics'
+  },
+  {
+    path: 'about/governance',
+    loadComponent: () => import('./features/pages/about/governance.component').then(m => m.GovernanceComponent),
+    title: 'Gouvernance - Circular Electronics'
+  },
+  {
+    path: 'about/partners',
+    loadComponent: () => import('./features/pages/about/partners.component').then(m => m.PartnersComponent),
+    title: 'Partenaires - Circular Electronics'
+  },
+  // Trust & Regulation pages
+  {
+    path: 'trust/traceability',
+    loadComponent: () => import('./features/pages/trust/traceability.component').then(m => m.TraceabilityComponent),
+    title: 'Traçabilité - Circular Electronics'
+  },
+  {
+    path: 'trust/rep-compliance',
+    loadComponent: () => import('./features/pages/trust/rep-compliance.component').then(m => m.RepComplianceComponent),
+    title: 'Conformité REP - Circular Electronics'
+  },
+  {
+    path: 'trust/methodology',
+    loadComponent: () => import('./features/pages/trust/methodology.component').then(m => m.MethodologyComponent),
+    title: 'Méthodologie - Circular Electronics'
+  },
+  {
+    path: 'trust/data-security',
+    loadComponent: () => import('./features/pages/trust/data-security.component').then(m => m.DataSecurityComponent),
+    title: 'Sécurité des données - Circular Electronics'
+  },
+  // Resources pages
+  {
+    path: 'resources/blog',
+    loadComponent: () => import('./features/pages/resources/blog.component').then(m => m.BlogComponent),
+    title: 'Blog - Circular Electronics'
+  },
+  {
+    path: 'resources/studies',
+    loadComponent: () => import('./features/pages/resources/studies.component').then(m => m.StudiesComponent),
+    title: 'Études & Chiffres - Circular Electronics'
+  },
+  {
+    path: 'resources/press',
+    loadComponent: () => import('./features/pages/resources/press.component').then(m => m.PressComponent),
+    title: 'Presse - Circular Electronics'
+  },
+  {
+    path: 'resources/faq',
+    loadComponent: () => import('./features/pages/resources/faq.component').then(m => m.FaqComponent),
+    title: 'FAQ Réglementaire - Circular Electronics'
+  },
+  // Legal pages
+  {
+    path: 'legal/terms',
+    loadComponent: () => import('./features/pages/legal/terms.component').then(m => m.TermsComponent),
+    title: 'Mentions Légales - Circular Electronics'
+  },
+  {
+    path: 'legal/privacy',
+    loadComponent: () => import('./features/pages/legal/privacy.component').then(m => m.PrivacyComponent),
+    title: 'Politique de Confidentialité - Circular Electronics'
+  },
   {
     path: '**',
     redirectTo: ''

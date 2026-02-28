@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -6,8 +6,11 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { PublicHeaderComponent } from '../../shared/components/layout/public-header.component';
 import { FooterComponent } from '../../shared/components/layout/footer.component';
+import { ContactService } from './contact.service';
 
 @Component({
   selector: 'app-contact',
@@ -20,6 +23,8 @@ import { FooterComponent } from '../../shared/components/layout/footer.component
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    MatSnackBarModule,
+    MatProgressSpinnerModule,
     PublicHeaderComponent,
     FooterComponent
   ],
@@ -136,9 +141,14 @@ import { FooterComponent } from '../../shared/components/layout/footer.component
               </mat-form-field>
 
               <button mat-raised-button color="primary" type="submit" class="submit-btn"
-                [disabled]="form.invalid">
-                <mat-icon>send</mat-icon>
-                Envoyer le message
+                [disabled]="form.invalid || loading">
+                @if (loading) {
+                  <mat-spinner diameter="20"></mat-spinner>
+                  Envoi en cours...
+                } @else {
+                  <mat-icon>send</mat-icon>
+                  Envoyer le message
+                }
               </button>
             </form>
           </div>
@@ -311,6 +321,11 @@ import { FooterComponent } from '../../shared/components/layout/footer.component
       mat-icon {
         margin-right: 0.5rem;
       }
+
+      mat-spinner {
+        display: inline-block;
+        margin-right: 0.5rem;
+      }
     }
 
     /* Info Sidebar */
@@ -417,6 +432,10 @@ import { FooterComponent } from '../../shared/components/layout/footer.component
 })
 export class ContactComponent {
   private fb = new FormBuilder();
+  private contactService = inject(ContactService);
+  private snackBar = inject(MatSnackBar);
+
+  loading = false;
 
   countries = [
     { code: 'FR', name: 'France', prefix: '+33' },
@@ -457,35 +476,39 @@ export class ContactComponent {
     return this.countries.find(c => c.code === this.form.controls.phonePrefix.value);
   }
 
-  private subjectLabels: Record<string, string> = {
-    demo: 'Demande de démo',
-    partenariat: 'Partenariat',
-    question: 'Question générale',
-    autre: 'Autre'
-  };
-
   onSubmit(): void {
-    if (this.form.invalid) return;
+    if (this.form.invalid || this.loading) return;
 
     const { name, email, company, subject, phonePrefix, phone, message } = this.form.getRawValue();
     const country = this.countries.find(c => c.code === phonePrefix);
     const prefix = country?.prefix ?? '+33';
-    const subjectLabel = this.subjectLabels[subject] || subject;
     const fullPhone = phone ? `${prefix} ${phone}` : '';
 
-    const mailSubject = `[Circular Electronics] ${subjectLabel}`;
-    const mailBody = [
-      `Nom : ${name}`,
-      `Email : ${email}`,
-      company ? `Organisation : ${company}` : '',
-      fullPhone ? `Téléphone : ${fullPhone}` : '',
-      `Sujet : ${subjectLabel}`,
-      '',
-      'Message :',
-      message
-    ].filter(Boolean).join('\n');
+    this.loading = true;
 
-    const mailto = `mailto:matta971@gmail.com?subject=${encodeURIComponent(mailSubject)}&body=${encodeURIComponent(mailBody)}`;
-    window.location.href = mailto;
+    this.contactService.submitContactForm({
+      name,
+      email,
+      company: company || undefined,
+      subject,
+      phone: fullPhone || undefined,
+      message
+    }).subscribe({
+      next: () => {
+        this.snackBar.open('Message envoyé ! Vérifiez votre boîte mail.', 'OK', {
+          duration: 6000,
+          panelClass: 'snackbar-success'
+        });
+        this.form.reset({ phonePrefix: 'FR' });
+        this.loading = false;
+      },
+      error: () => {
+        this.snackBar.open('Erreur lors de l\'envoi. Veuillez réessayer.', 'Fermer', {
+          duration: 6000,
+          panelClass: 'snackbar-error'
+        });
+        this.loading = false;
+      }
+    });
   }
 }

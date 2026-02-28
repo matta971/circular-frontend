@@ -82,20 +82,38 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
         </div>
       </section>
 
-      <!-- Newsletter Banner -->
-      <section class="section section-alt">
-        <div class="container banner-container">
-          <mat-icon class="banner-icon">campaign</mat-icon>
-          <h2>Bient&ocirc;t plus d'articles</h2>
-          <p>
-            Notre &eacute;quipe pr&eacute;pare de nouveaux contenus sur la r&eacute;glementation DEEE,
-            les bonnes pratiques de recyclage et les innovations en &eacute;conomie circulaire.
-            Inscrivez-vous pour &ecirc;tre inform&eacute; des prochaines publications.
-          </p>
-          <a mat-raised-button color="primary" routerLink="/contact" class="cta-button">
-            <mat-icon>mail</mat-icon>
-            S'inscrire &agrave; la newsletter
-          </a>
+      <!-- Pour aller plus loin -->
+      <section class="section section-crosslinks">
+        <div class="container">
+          <h2>Pour aller plus loin</h2>
+          <div class="crosslinks-grid">
+            @for (link of crossLinks; track link.route) {
+              <a [routerLink]="link.route" class="crosslink-card">
+                <mat-icon>{{ link.icon }}</mat-icon>
+                <h3>{{ link.title }}</h3>
+                <p>{{ link.description }}</p>
+                <span class="crosslink-arrow"><mat-icon>arrow_forward</mat-icon></span>
+              </a>
+            }
+          </div>
+        </div>
+      </section>
+
+      <!-- CTA -->
+      <section class="section section-cta">
+        <div class="container cta-container">
+          <h2>Passez à l'action</h2>
+          <p>Rejoignez Circular Electronics et contribuez à l'économie circulaire.</p>
+          <div class="dual-cta">
+            <a mat-raised-button color="primary" routerLink="/auth/register" class="cta-button">
+              <mat-icon>rocket_launch</mat-icon>
+              Commencer maintenant
+            </a>
+            <a mat-stroked-button routerLink="/contact" class="cta-button-secondary">
+              <mat-icon>support_agent</mat-icon>
+              Contacter un expert
+            </a>
+          </div>
         </div>
       </section>
 
@@ -217,34 +235,119 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
       margin: 0;
     }
 
-    /* Banner */
-    .banner-container {
+    /* Cross-links */
+    .section-crosslinks {
+      background: #f8f9fb;
+    }
+
+    .crosslinks-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .crosslink-card {
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.75rem 1.5rem;
+      text-decoration: none;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .crosslink-card:hover {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .crosslink-card mat-icon {
+      font-size: 2rem;
+      width: 2rem;
+      height: 2rem;
+      color: #474bfe;
+      margin-bottom: 0.75rem;
+    }
+
+    .crosslink-card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .crosslink-card p {
+      font-size: 0.9rem;
+      color: #475569;
+      line-height: 1.5;
+      margin: 0;
+      flex: 1;
+    }
+
+    .crosslink-arrow {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 1rem;
+    }
+
+    .crosslink-arrow mat-icon {
+      font-size: 1.25rem;
+      width: 1.25rem;
+      height: 1.25rem;
+      color: #474bfe;
+    }
+
+    /* CTA */
+    .section-cta {
+      background: #f8f9fb;
+    }
+
+    .cta-container {
       text-align: center;
     }
 
-    .banner-icon {
-      font-size: 2.5rem;
-      width: 2.5rem;
-      height: 2.5rem;
-      color: #474bfe;
-      margin-bottom: 0.5rem;
+    .cta-container h2 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 0.75rem;
     }
 
-    .banner-container p {
+    .cta-container p {
       color: #475569;
       font-size: 1.05rem;
-      line-height: 1.7;
-      margin: 0 0 1.5rem 0;
+      margin-bottom: 0;
     }
 
-    .cta-button {
-      font-size: 1rem;
-      padding: 0 2rem;
-      height: 44px;
+    /* Dual CTA */
+    .dual-cta {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin-top: 1.5rem;
     }
 
-    .cta-button mat-icon {
+    .cta-button mat-icon,
+    .cta-button-secondary mat-icon {
       margin-right: 0.5rem;
+    }
+
+    .cta-button-secondary {
+      border: 1px solid #474bfe;
+      color: #474bfe;
+      padding: 0 2rem;
+      height: 36px;
+      border-radius: 4px;
+      font-weight: 500;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .cta-button-secondary:hover {
+      background: rgba(71, 75, 254, 0.04);
     }
 
     /* Responsive */
@@ -279,7 +382,22 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
       .articles-grid {
         grid-template-columns: 1fr;
       }
+
+      .crosslinks-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .dual-cta {
+        flex-direction: column;
+        align-items: center;
+      }
     }
   `]
 })
-export class BlogComponent {}
+export class BlogComponent {
+  crossLinks = [
+    { icon: 'bar_chart', title: 'Études & Chiffres', description: 'Les données clés de l\'économie circulaire électronique.', route: '/resources/studies' },
+    { icon: 'help_outline', title: 'FAQ', description: 'Questions fréquentes sur la réglementation DEEE.', route: '/resources/faq' },
+    { icon: 'newspaper', title: 'Presse', description: 'Ressources et informations pour les médias.', route: '/resources/press' }
+  ];
+}

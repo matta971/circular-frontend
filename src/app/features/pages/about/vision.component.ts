@@ -170,18 +170,42 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
         </div>
       </section>
 
+      <!-- Pour aller plus loin -->
+      <section class="section section-crosslinks">
+        <div class="container">
+          <h2>Pour aller plus loin</h2>
+          <div class="crosslinks-grid">
+            @for (link of crossLinks; track link.route) {
+              <a [routerLink]="link.route" class="crosslink-card">
+                <mat-icon>{{ link.icon }}</mat-icon>
+                <h3>{{ link.title }}</h3>
+                <p>{{ link.description }}</p>
+                <span class="crosslink-arrow"><mat-icon>arrow_forward</mat-icon></span>
+              </a>
+            }
+          </div>
+        </div>
+      </section>
+
       <!-- CTA -->
       <section class="section section-cta">
         <div class="container cta-container">
           <h2>Partagez notre vision</h2>
-          <p>
-            Vous souhaitez contribuer à un avenir où chaque appareil électronique est tracé
-            et valorisé ? Échangeons ensemble sur les possibilités.
-          </p>
-          <a mat-raised-button color="primary" routerLink="/contact" class="cta-button">
-            <mat-icon>mail</mat-icon>
-            Nous contacter
-          </a>
+          <p>Choisissez votre parcours pour agir avec nous</p>
+          <div class="persona-buttons">
+            <a routerLink="/citoyen" class="persona-btn persona-citoyen">
+              <mat-icon>person</mat-icon>
+              <span>Je suis un citoyen</span>
+            </a>
+            <a routerLink="/association" class="persona-btn persona-association">
+              <mat-icon>groups</mat-icon>
+              <span>Je suis une association</span>
+            </a>
+            <a routerLink="/entreprise" class="persona-btn persona-entreprise">
+              <mat-icon>business</mat-icon>
+              <span>Je suis une entreprise</span>
+            </a>
+          </div>
         </div>
       </section>
 
@@ -406,6 +430,119 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
       margin-right: 0.5rem;
     }
 
+    /* Cross-links */
+    .section-crosslinks {
+      background: #f8f9fb;
+    }
+
+    .crosslinks-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+
+    .crosslink-card {
+      display: flex;
+      flex-direction: column;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1.75rem 1.5rem;
+      text-decoration: none;
+      transition: box-shadow 0.2s, transform 0.2s;
+    }
+
+    .crosslink-card:hover {
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+      transform: translateY(-2px);
+    }
+
+    .crosslink-card mat-icon {
+      font-size: 2rem;
+      width: 2rem;
+      height: 2rem;
+      color: #474bfe;
+      margin-bottom: 0.75rem;
+    }
+
+    .crosslink-card h3 {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #1e293b;
+      margin: 0 0 0.5rem 0;
+    }
+
+    .crosslink-card p {
+      font-size: 0.9rem;
+      color: #475569;
+      line-height: 1.5;
+      margin: 0;
+      flex: 1;
+    }
+
+    .crosslink-arrow {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 1rem;
+    }
+
+    .crosslink-arrow mat-icon {
+      font-size: 1.25rem;
+      width: 1.25rem;
+      height: 1.25rem;
+      color: #474bfe;
+    }
+
+    /* Persona CTA */
+    .persona-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .persona-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.875rem 1.5rem;
+      border-radius: 12px;
+      text-decoration: none;
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: transform 0.2s, box-shadow 0.2s;
+      border: 2px solid transparent;
+    }
+
+    .persona-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+    }
+
+    .persona-btn mat-icon {
+      font-size: 1.5rem;
+      width: 1.5rem;
+      height: 1.5rem;
+    }
+
+    .persona-citoyen {
+      background: #e8f5e9;
+      color: #2e7d32;
+      border-color: #c8e6c9;
+    }
+
+    .persona-association {
+      background: #e0f2fe;
+      color: #0277bd;
+      border-color: #b3e5fc;
+    }
+
+    .persona-entreprise {
+      background: #e3f2fd;
+      color: #1565c0;
+      border-color: #bbdefb;
+    }
+
     /* Responsive */
     @media (max-width: 768px) {
       .hero {
@@ -440,7 +577,28 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
       .stats-grid {
         grid-template-columns: 1fr;
       }
+
+      .crosslinks-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .persona-buttons {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .persona-btn {
+        width: 100%;
+        max-width: 280px;
+        justify-content: center;
+      }
     }
   `]
 })
-export class VisionComponent {}
+export class VisionComponent {
+  crossLinks = [
+    { icon: 'flag', title: 'Notre Mission', description: 'Accélérer la transition vers une économie circulaire des équipements.', route: '/about/mission' },
+    { icon: 'science', title: 'Méthodologie', description: 'Une évaluation transparente et reproductible de chaque appareil.', route: '/trust/methodology' },
+    { icon: 'handshake', title: 'Partenaires', description: 'Un écosystème collaboratif réunissant tous les acteurs.', route: '/about/partners' }
+  ];
+}

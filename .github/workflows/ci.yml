@@ -1,4 +1,4 @@
-name: CI — Build
+name: CI — Build & E2E
 
 on:
   pull_request:
@@ -27,3 +27,41 @@ jobs:
 
       - name: Build production
         run: npx ng build --configuration production
+
+  e2e:
+    name: E2E Tests
+    runs-on: ubuntu-latest
+    needs: build
+    timeout-minutes: 30
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --legacy-peer-deps
+
+      - name: Install Playwright browsers
+        run: cd e2e && npx playwright install --with-deps chromium
+
+      - name: Run E2E tests
+        run: cd e2e && npx playwright test --project=chromium --reporter=list
+        env:
+          CI: true
+          BASE_URL: ${{ vars.E2E_BASE_URL || 'http://95.217.183.194' }}
+
+      - name: Upload test results (screenshots, videos, traces)
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            e2e/test-results/
+          retention-days: 14

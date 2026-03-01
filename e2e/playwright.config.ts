@@ -13,6 +13,7 @@ export default defineConfig({
     baseURL: process.env.BASE_URL || 'http://95.217.183.194',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
+    video: 'on-first-retry',
     locale: 'fr-FR',
     navigationTimeout: 45_000,
   },

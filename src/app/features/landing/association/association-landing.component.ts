@@ -68,6 +68,42 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
         </div>
       </section>
 
+      <!-- Impact Section -->
+      <section class="section section-impact">
+        <div class="container">
+          <h2>Votre impact avec Circular Electronics</h2>
+          <p class="section-text">
+            Des résultats concrets pour valoriser votre engagement associatif.
+          </p>
+          <div class="impact-grid">
+            <div class="impact-card">
+              <span class="impact-value">+150%</span>
+              <span class="impact-label">de visibilité de vos actions</span>
+              <p class="impact-desc">
+                Vos collectes et actions sont référencées publiquement
+                sur la plateforme et valorisées auprès des citoyens.
+              </p>
+            </div>
+            <div class="impact-card">
+              <span class="impact-value">100%</span>
+              <span class="impact-label">traçabilité des équipements</span>
+              <p class="impact-desc">
+                Chaque appareil collecté est suivi de bout en bout,
+                de la collecte au recyclage ou reconditionnement.
+              </p>
+            </div>
+            <div class="impact-card">
+              <span class="impact-value">0&euro;</span>
+              <span class="impact-label">coût d'adhésion</span>
+              <p class="impact-desc">
+                L'accès à la plateforme est entièrement gratuit
+                pour les associations de l'économie sociale et solidaire.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Solution Section -->
       <section class="section section-solution" id="how-it-works">
         <div class="container">
@@ -105,6 +141,56 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
         </div>
       </section>
 
+      <!-- How it Works Section -->
+      <section class="section section-steps">
+        <div class="container">
+          <h2>Comment ça marche</h2>
+          <div class="steps">
+            <div class="step">
+              <div class="step-number">1</div>
+              <div class="step-icon">
+                <mat-icon>app_registration</mat-icon>
+              </div>
+              <h3>Inscrivez votre association</h3>
+              <p>Créez votre espace en quelques minutes, gratuitement</p>
+            </div>
+            <div class="step-arrow">
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+            <div class="step">
+              <div class="step-number">2</div>
+              <div class="step-icon">
+                <mat-icon>inventory_2</mat-icon>
+              </div>
+              <h3>Enregistrez vos collectes</h3>
+              <p>Déclarez chaque collecte d'équipements simplement</p>
+            </div>
+            <div class="step-arrow">
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+            <div class="step">
+              <div class="step-number">3</div>
+              <div class="step-icon">
+                <mat-icon>qr_code_scanner</mat-icon>
+              </div>
+              <h3>Tracez chaque appareil</h3>
+              <p>Suivez le parcours de chaque équipement collecté</p>
+            </div>
+            <div class="step-arrow">
+              <mat-icon>arrow_forward</mat-icon>
+            </div>
+            <div class="step">
+              <div class="step-number">4</div>
+              <div class="step-icon">
+                <mat-icon>trending_up</mat-icon>
+              </div>
+              <h3>Valorisez votre impact</h3>
+              <p>Obtenez des rapports d'impact pour vos partenaires</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <!-- Partnership Section -->
       <section class="section section-partnership" id="partners">
         <div class="container">
@@ -132,6 +218,31 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
                   Gouvernance claire et transparente
                 </li>
               </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Trust Section -->
+      <section class="section section-trust">
+        <div class="container">
+          <h2>Pourquoi nous faire confiance</h2>
+          <div class="trust-items">
+            <div class="trust-item">
+              <mat-icon>volunteer_activism</mat-icon>
+              <span>Gratuit pour les associations ESS</span>
+            </div>
+            <div class="trust-item">
+              <mat-icon>shield</mat-icon>
+              <span>Données sécurisées et conformes RGPD</span>
+            </div>
+            <div class="trust-item">
+              <mat-icon>support_agent</mat-icon>
+              <span>Accompagnement dédié</span>
+            </div>
+            <div class="trust-item">
+              <mat-icon>verified</mat-icon>
+              <span>Impact mesurable et vérifiable</span>
             </div>
           </div>
         </div>
@@ -426,6 +537,164 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
       }
     }
 
+    /* Impact Section */
+    .section-impact {
+      background: white;
+    }
+
+    .impact-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+      margin-top: 2rem;
+    }
+
+    .impact-card {
+      background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+      border-radius: 16px;
+      padding: 2rem 1.5rem;
+      text-align: center;
+      border: 1px solid #bae6fd;
+    }
+
+    .impact-value {
+      display: block;
+      font-size: 2.5rem;
+      font-weight: 800;
+      color: #0ea5e9;
+      line-height: 1.2;
+    }
+
+    .impact-label {
+      display: block;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #0284c7;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin-top: 0.25rem;
+    }
+
+    .impact-desc {
+      font-size: 0.9rem;
+      color: var(--ce-gray-600, #757575);
+      line-height: 1.5;
+      margin: 1rem 0 0 0;
+    }
+
+    /* Steps Section */
+    .section-steps {
+      background: var(--ce-gray-50, #fafafa);
+    }
+
+    .steps {
+      display: flex;
+      align-items: flex-start;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 3rem;
+    }
+
+    .step {
+      text-align: center;
+      padding: 1.5rem;
+      flex: 1;
+      max-width: 250px;
+    }
+
+    .step-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #0ea5e9;
+      color: white;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+    }
+
+    .step-icon {
+      width: 100px;
+      height: 100px;
+      border-radius: 16px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 1rem;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+
+      mat-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+        color: #0ea5e9;
+      }
+    }
+
+    .step h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--ce-gray-900, #212121);
+      margin: 0 0 0.5rem 0;
+    }
+
+    .step p {
+      color: var(--ce-gray-600, #757575);
+      font-size: 0.9rem;
+      margin: 0;
+    }
+
+    .step-arrow {
+      display: flex;
+      align-items: center;
+      padding-top: 80px;
+
+      mat-icon {
+        font-size: 32px;
+        width: 32px;
+        height: 32px;
+        color: var(--ce-gray-400, #bdbdbd);
+      }
+    }
+
+    /* Trust Section */
+    .section-trust {
+      background: white;
+    }
+
+    .trust-items {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+      max-width: 800px;
+      margin: 3rem auto 0;
+    }
+
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1.5rem;
+      background: var(--ce-gray-50, #fafafa);
+      border-radius: var(--ce-radius-md, 8px);
+      border-left: 4px solid #0ea5e9;
+
+      mat-icon {
+        color: #0ea5e9;
+        font-size: 28px;
+        width: 28px;
+        height: 28px;
+      }
+
+      span {
+        color: var(--ce-gray-700, #616161);
+        font-weight: 500;
+      }
+    }
+
     /* Final CTA Section */
     .section-final-cta {
       background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%);
@@ -462,7 +731,7 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
       .hero {
         flex-direction: column;
         text-align: center;
-        padding: 3rem 1.5rem;
+        padding: 80px 1.5rem 3rem 1.5rem;
       }
 
       .hero-cta {
@@ -471,6 +740,24 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
 
       .features {
         grid-template-columns: repeat(2, 1fr);
+      }
+
+      .impact-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .steps {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .step-arrow {
+        transform: rotate(90deg);
+        padding: 0;
+      }
+
+      .trust-items {
+        grid-template-columns: 1fr;
       }
 
       .partnership-content {

@@ -176,7 +176,7 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
         <div class="container">
           <h2>Échanger avec un expert Circular Electronics</h2>
           <p>Découvrez comment optimiser la gestion de vos équipements électroniques.</p>
-          <a mat-raised-button color="primary" routerLink="/contact" class="cta-final">
+          <a mat-raised-button color="primary" class="cta-final" routerLink="/contact">
             Demander une démo
           </a>
         </div>
@@ -565,7 +565,7 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
       .hero {
         flex-direction: column;
         text-align: center;
-        padding: 3rem 1.5rem;
+        padding: 80px 1.5rem 3rem 1.5rem;
       }
 
       .hero-cta {

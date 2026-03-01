@@ -30,13 +30,15 @@ export default defineConfig({
       name: 'mobile-chrome',
       use: { ...devices['Pixel 5'] },
     },
-    {
-      name: 'mobile-safari',
-      use: { ...devices['iPhone 13'] },
-    },
-    {
-      name: 'tablet',
-      use: { ...devices['iPad (gen 7)'] },
-    },
+    // WebKit-based projects — require macOS or Linux (skip on Windows)
+    // Uncomment when running on CI with WebKit support
+    // {
+    //   name: 'mobile-safari',
+    //   use: { ...devices['iPhone 13'] },
+    // },
+    // {
+    //   name: 'tablet',
+    //   use: { ...devices['iPad (gen 7)'] },
+    // },
   ],
 });

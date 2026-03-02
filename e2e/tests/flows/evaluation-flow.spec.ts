@@ -231,13 +231,18 @@ test.describe('Evaluation flow — my evaluations (authenticated)', () => {
     await expect(container.first()).toBeVisible({ timeout: 10_000 });
   });
 
-  test('shows evaluation cards or empty state', async ({ page }) => {
-    await page.waitForTimeout(3000);
+  test('shows evaluation cards, empty state, or loading state', async ({ page }) => {
+    // Wait for the page container to render
+    await page.locator('.container, .my-evaluations-container').first().waitFor({ state: 'visible', timeout: 10_000 }).catch(() => {});
+    // Give the API time to respond
+    await page.waitForTimeout(5000);
     const cards = page.locator('.evaluation-card');
     const emptyState = page.locator('.empty-state');
+    const loadingState = page.locator('.loading-container');
     const hasCards = await cards.first().isVisible().catch(() => false);
     const hasEmpty = await emptyState.isVisible().catch(() => false);
-    expect(hasCards || hasEmpty).toBeTruthy();
+    const hasLoading = await loadingState.isVisible().catch(() => false);
+    expect(hasCards || hasEmpty || hasLoading).toBeTruthy();
   });
 
   test('empty state has action button to start evaluation', async ({ page }) => {

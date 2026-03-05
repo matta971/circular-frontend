@@ -1,8 +1,9 @@
-import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, inject, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { SeoService } from '../../../core/services/seo.service';
 import { MatCardModule } from '@angular/material/card';
 import { PublicHeaderComponent } from '../../../shared/components/layout/public-header.component';
 import { FooterComponent } from '../../../shared/components/layout/footer.component';
@@ -805,8 +806,19 @@ import { FooterComponent } from '../../../shared/components/layout/footer.compon
     }
   `]
 })
-export class AssociationLandingComponent {
+export class AssociationLandingComponent implements OnInit {
+  private seo = inject(SeoService);
+  private platformId = inject(PLATFORM_ID);
+
+  ngOnInit(): void {
+    this.seo.update({
+      title: 'Association',
+      description: 'Associations, rejoignez le reseau Circular Electronics. Collectez, triez et valorisez les appareils electroniques avec tracabilite et recompenses.'
+    });
+  }
+
   scrollTo(section: string): void {
+    if (!isPlatformBrowser(this.platformId)) return;
     const element = document.getElementById(section);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });

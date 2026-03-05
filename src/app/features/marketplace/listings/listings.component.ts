@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -12,6 +12,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MarketplaceService } from '../../../core/services';
+import { SeoService } from '../../../core/services/seo.service';
 import {
   P2PListing,
   ListingSearchParams,
@@ -335,9 +336,16 @@ export class ListingsComponent implements OnInit {
   categories = Object.values(DeviceCategory);
   conditions = Object.values(ListingCondition);
 
+  private seo = inject(SeoService);
+
   constructor(private marketplaceService: MarketplaceService) {}
 
   ngOnInit(): void {
+    this.seo.update({
+      title: 'Marketplace',
+      description: 'Achetez et vendez des appareils electroniques d\'occasion certifies sur Circular Electronics. Smartphones, tablettes, ordinateurs — tous verifies et traces.',
+      ogType: 'website'
+    });
     this.search();
   }
 

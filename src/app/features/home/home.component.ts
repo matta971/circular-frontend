@@ -1,9 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
+import { SeoService } from '../../core/services/seo.service';
 
 @Component({
   selector: 'app-home',
@@ -827,4 +828,26 @@ import { MatIconModule } from '@angular/material/icon';
     }
   `]
 })
-export class HomeComponent {}
+export class HomeComponent implements OnInit {
+  private seo = inject(SeoService);
+
+  ngOnInit(): void {
+    this.seo.update({
+      title: 'Accueil',
+      description: 'Circular Electronics - Plateforme de collecte, evaluation, reparation, revente et recyclage d\'appareils electroniques. Donnez une seconde vie a vos appareils et gagnez des recompenses.',
+      ogType: 'website',
+      jsonLd: {
+        '@context': 'https://schema.org',
+        '@type': 'Organization',
+        name: 'Circular Electronics',
+        url: 'https://www.circular-electronics.com',
+        description: 'Plateforme de collecte, evaluation, reparation, revente et recyclage d\'appareils electroniques.',
+        contactPoint: {
+          '@type': 'ContactPoint',
+          email: 'matta971@gmail.com',
+          contactType: 'customer service'
+        }
+      }
+    });
+  }
+}

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { MatCardModule } from '@angular/material/card';
@@ -10,6 +10,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MarketplaceService, AuthService } from '../../../core/services';
+import { SeoService } from '../../../core/services/seo.service';
 import { P2PListing, DeliveryMethod } from '../../../core/models';
 
 @Component({
@@ -479,13 +480,15 @@ export class ListingDetailComponent implements OnInit {
   isFavorite = false;
   isOwner = false;
 
+  private seo = inject(SeoService);
+
   constructor(
     private route: ActivatedRoute,
     private router: Router,
     private marketplaceService: MarketplaceService,
     private authService: AuthService,
     private snackBar: MatSnackBar
-  ) {}
+) {}
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
@@ -503,10 +506,50 @@ export class ListingDetailComponent implements OnInit {
         if (listing) {
           const currentUser = this.authService.currentUser();
           this.isOwner = currentUser?.id === listing.sellerId;
+          this.updateSeo(listing);
         }
       },
       error: () => {
         this.loading = false;
+      }
+    });
+  }
+
+  private updateSeo(listing: P2PListing): void {
+    const title = `${listing.title} - ${listing.brand} ${listing.model}`;
+    const description = listing.description
+      ? listing.description.substring(0, 160)
+      : `${listing.brand} ${listing.model} ${this.getConditionLabel(listing.condition)} a ${listing.price}EUR sur Circular Electronics`;
+    const image = listing.images?.length ? listing.images[0] : undefined;
+
+    this.seo.update({
+      title,
+      description,
+      ogTitle: title,
+      ogDescription: description,
+      ogImage: image,
+      ogType: 'product',
+      jsonLd: {
+        '@context': 'https://schema.org',
+        '@type': 'Product',
+        name: listing.title,
+        description: listing.description || description,
+        brand: { '@type': 'Brand', name: listing.brand },
+        model: listing.model,
+        image: image,
+        offers: {
+          '@type': 'Offer',
+          price: listing.price,
+          priceCurrency: 'EUR',
+          availability: 'https://schema.org/InStock',
+          itemCondition: listing.condition === 'NEW'
+            ? 'https://schema.org/NewCondition'
+            : 'https://schema.org/UsedCondition',
+          seller: {
+            '@type': 'Person',
+            name: listing.sellerName || 'Vendeur'
+          }
+        }
       }
     });
   }

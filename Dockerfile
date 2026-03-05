@@ -1,9 +1,9 @@
 # ===================================================
 # Circular Electronics Frontend - Production Dockerfile
 # ===================================================
-# Multi-stage: Angular 20 build + nginx serve
+# Multi-stage: Angular 20 build + Node.js SSR server
 
-# Stage 1: Build Angular app
+# Stage 1: Build Angular app (browser + server)
 FROM node:20-alpine AS builder
 
 WORKDIR /app
@@ -15,24 +15,22 @@ RUN npm ci --legacy-peer-deps
 # Copy source code
 COPY . .
 
-# Build for production
+# Build for production (SSR mode generates browser/ + server/)
 RUN npx ng build --configuration production
 
-# Stage 2: Serve with Nginx
-FROM nginx:alpine
+# Stage 2: Run SSR with Node.js
+FROM node:20-alpine
 
-# Remove default nginx config
-RUN rm /etc/nginx/conf.d/default.conf
+WORKDIR /app
 
-# Copy custom nginx config for SPA routing
-COPY nginx.conf /etc/nginx/nginx.conf
+# Copy the built output
+COPY --from=builder /app/dist/circular-frontend /app/dist/circular-frontend
 
-# Copy built Angular app
-COPY --from=builder /app/dist/circular-frontend/browser /usr/share/nginx/html
+EXPOSE 4000
 
-EXPOSE 80
+ENV PORT=4000
 
-HEALTHCHECK --interval=15s --timeout=5s --retries=3 \
-    CMD wget -q --spider http://localhost:80/health || exit 1
+HEALTHCHECK --interval=15s --timeout=5s --retries=5 --start-period=30s \
+    CMD wget -q --spider http://localhost:4000 || exit 1
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["node", "dist/circular-frontend/server/server.mjs"]

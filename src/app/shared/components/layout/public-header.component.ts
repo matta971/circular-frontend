@@ -1,5 +1,5 @@
-import { Component, inject, Input } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, inject, Input, PLATFORM_ID } from '@angular/core';
+import { isPlatformBrowser, CommonModule } from '@angular/common';
 import { RouterLink, Router } from '@angular/router';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
@@ -211,8 +211,10 @@ export class PublicHeaderComponent {
   @Input() currentPage: LandingPageType = null;
 
   private router = inject(Router);
+  private platformId = inject(PLATFORM_ID);
 
   scrollTo(section: string): void {
+    if (!isPlatformBrowser(this.platformId)) return;
     const element = document.getElementById(section);
     if (element) {
       element.scrollIntoView({ behavior: 'smooth', block: 'start' });
